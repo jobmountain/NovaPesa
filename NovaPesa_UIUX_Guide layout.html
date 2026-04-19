@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaPesa — UI/UX Design Guide v2.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@300;400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:#080808; --carbon:#141414; --card:#1c1c1c; --border:#2a2a2a;
+  --gold:#FFB400; --gold2:#ffd060; --green:#00CC66; --green2:#00aa55;
+  --dkgreen:#004422; --white:#ffffff; --gray1:#aaaaaa; --gray2:#666666;
+  --teal:#007788; --purple:#7744cc; --orange:#cc5500; --red:#aa2200;
+  --blue:#4488ff; --navy:#002255;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'Lato',sans-serif;line-height:1.6;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--carbon);}
+::-webkit-scrollbar-thumb{background:var(--green2);border-radius:3px;}
+
+/* SIDEBAR */
+.sidebar{position:fixed;left:0;top:0;width:248px;height:100vh;background:var(--carbon);border-right:1px solid var(--border);overflow-y:auto;z-index:100;padding-bottom:2rem;}
+.sidebar-logo{padding:1.4rem 1.2rem .9rem;border-bottom:1px solid var(--border);}
+.sidebar-logo .nova{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:900;color:var(--gold);}
+.sidebar-logo .pesa{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:300;color:var(--white);}
+.sidebar-logo .sub{font-size:.6rem;color:var(--gray2);letter-spacing:2px;margin-top:.2rem;}
+.nav-section{padding:.7rem 1.2rem .25rem;font-size:.58rem;color:var(--gray2);letter-spacing:3px;font-weight:700;}
+.nav-item{display:flex;align-items:center;gap:.55rem;padding:.45rem 1.2rem;font-size:.78rem;color:var(--gray1);cursor:pointer;transition:.2s;text-decoration:none;border-left:3px solid transparent;}
+.nav-item:hover{color:var(--white);background:var(--card);border-left-color:var(--green);}
+.nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(255,180,0,.06);}
+.nav-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.nav-badge{font-size:.5rem;background:var(--gold);color:var(--black);padding:.1rem .3rem;border-radius:3px;font-weight:700;margin-left:auto;}
+.nav-badge.new{background:var(--green);}
+
+/* MAIN */
+.main{margin-left:248px;min-height:100vh;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--dkgreen) 0%,var(--black) 60%);padding:4rem 3rem 3rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;border:1px solid rgba(0,204,102,.1);border-radius:50%;}
+.hero::after{content:'';position:absolute;top:-30px;right:-30px;width:200px;height:200px;border:1px solid rgba(255,180,0,.08);border-radius:50%;}
+.hero-tag{font-size:.65rem;letter-spacing:4px;color:var(--green);font-weight:700;margin-bottom:1rem;}
+.hero h1{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;line-height:1.15;margin-bottom:.8rem;}
+.hero h1 span{color:var(--gold);}
+.hero p{color:var(--gray1);max-width:600px;font-size:1rem;}
+.hero-stats{display:flex;gap:2rem;margin-top:2rem;}
+.hero-stat .num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--gold);}
+.hero-stat .lbl{font-size:.7rem;color:var(--gray2);letter-spacing:1px;}
+
+/* SECTIONS */
+.section{padding:3rem;border-bottom:1px solid var(--border);}
+.section-header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;}
+.section-num{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--green);background:rgba(0,204,102,.1);padding:.3rem .6rem;border-radius:4px;letter-spacing:1px;}
+.section-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;}
+.section-sub{color:var(--gray1);margin-top:.3rem;font-size:.9rem;}
+
+/* TOKENS */
+.token-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.token-card{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.token-swatch{height:56px;}
+.token-info{padding:.65rem;}
+.token-name{font-size:.75rem;font-weight:700;color:var(--white);}
+.token-hex{font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--gray2);}
+.token-use{font-size:.63rem;color:var(--gray1);margin-top:.15rem;}
+
+/* FONT DEMOS */
+.font-demo{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.4rem;margin-bottom:1rem;}
+.font-sample-h{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--gold);margin-bottom:.3rem;}
+.font-meta{font-size:.68rem;color:var(--gray2);margin-top:.5rem;font-family:'JetBrains Mono',monospace;}
+
+/* SCREENS */
+.screens-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1.5rem;}
+.screen-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:.3s;}
+.screen-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,204,102,.1);}
+.screen-label{padding:.75rem 1rem;background:var(--carbon);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.screen-name{font-size:.75rem;font-weight:700;color:var(--white);}
+.screen-tag{font-size:.6rem;color:var(--green);background:rgba(0,204,102,.1);padding:.2rem .5rem;border-radius:3px;}
+.screen-mockup{padding:1rem;min-height:220px;position:relative;}
+.screen-desc{padding:.75rem 1rem;border-top:1px solid var(--border);}
+.screen-desc p{font-size:.75rem;color:var(--gray1);line-height:1.5;}
+
+/* MOCK UI */
+.mock-topbar{background:var(--carbon);height:26px;border-radius:6px;margin-bottom:.5rem;display:flex;align-items:center;padding:0 .5rem;gap:.3rem;}
+.mock-card{background:var(--black);border:1px solid var(--border);border-radius:6px;padding:.55rem;margin-bottom:.4rem;}
+.mock-val{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--gold);}
+.mock-val.green{color:var(--green);}
+.mock-val.sm{font-size:.8rem;}
+.mock-sub{font-size:.55rem;color:var(--gray2);}
+.mock-btn{background:var(--green);color:var(--black);font-size:.55rem;font-weight:700;padding:.3rem .6rem;border-radius:4px;text-align:center;}
+.mock-btn.gold{background:var(--gold);}
+.mock-btn.outline{background:transparent;border:1px solid var(--green);color:var(--green);}
+.mock-btn.purple{background:var(--purple);color:var(--white);}
+.mock-list-item{display:flex;align-items:center;gap:.4rem;padding:.3rem 0;border-bottom:1px solid var(--border);}
+.mock-avatar{width:18px;height:18px;border-radius:50%;background:var(--green2);display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:700;flex-shrink:0;}
+.mock-list-val{font-size:.6rem;font-weight:700;color:var(--green);margin-left:auto;}
+.mock-progress{height:4px;background:var(--border);border-radius:2px;margin:.3rem 0;}
+.mock-progress-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),var(--gold));}
+.mock-bottomnav{display:flex;justify-content:space-around;background:var(--carbon);border-top:1px solid var(--border);border-radius:0 0 6px 6px;padding:.4rem 0;margin-top:.3rem;}
+.mock-navitem{display:flex;flex-direction:column;align-items:center;gap:.1rem;}
+.mock-navitem span{font-size:.45rem;color:var(--gray2);}
+.mock-navitem.active span{color:var(--gold);}
+.mock-pill{background:var(--dkgreen);border:1px solid var(--green2);border-radius:20px;padding:.2rem .5rem;font-size:.5rem;color:var(--green);display:inline-block;margin:.1rem;}
+.mock-pill.inactive{background:var(--card);border-color:var(--border);color:var(--gray2);}
+
+/* SPEC TABLE */
+.spec-table{width:100%;border-collapse:collapse;margin:.8rem 0;}
+.spec-table th{background:var(--dkgreen);color:var(--gold);font-size:.75rem;padding:.65rem 1rem;text-align:left;letter-spacing:1px;}
+.spec-table td{padding:.6rem 1rem;font-size:.8rem;border-bottom:1px solid var(--border);vertical-align:top;}
+.spec-table tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+.spec-table td:first-child{color:var(--green);font-weight:700;font-family:'JetBrains Mono',monospace;font-size:.7rem;}
+.spec-table td:nth-child(2){color:var(--white);font-weight:600;}
+.spec-table td:nth-child(3){color:var(--gray1);}
+
+/* PILLAR HEADERS */
+.pillar-hdr{display:flex;align-items:center;gap:1rem;padding:1.2rem 1.5rem;border-radius:8px;margin-bottom:1.5rem;}
+.pillar-num{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;line-height:1;flex-shrink:0;}
+.pillar-info h2{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;}
+.pillar-info p{font-size:.8rem;opacity:.7;margin-top:.2rem;}
+
+/* NOTES */
+.note{background:rgba(0,204,102,.05);border-left:3px solid var(--green);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:.5rem 0;font-size:.8rem;color:var(--gray1);}
+.note strong{color:var(--green);}
+.warn{background:rgba(255,180,0,.05);border-left:3px solid var(--gold);padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:.5rem 0;font-size:.8rem;color:var(--gray1);}
+.warn strong{color:var(--gold);}
+.v1-badge{display:inline-block;background:var(--gold);color:var(--black);font-size:.6rem;font-weight:700;padding:.15rem .45rem;border-radius:3px;letter-spacing:1px;margin-left:.5rem;vertical-align:middle;}
+.new-badge{display:inline-block;background:var(--green);color:var(--black);font-size:.6rem;font-weight:700;padding:.15rem .45rem;border-radius:3px;letter-spacing:1px;margin-left:.5rem;vertical-align:middle;}
+
+/* COMP GRID */
+.comp-spec{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}
+.comp-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem;}
+.comp-box h4{font-size:.8rem;font-weight:700;color:var(--gold);margin-bottom:.6rem;}
+.comp-item{font-size:.75rem;color:var(--gray1);padding:.2rem 0;border-bottom:1px solid var(--border);}
+.comp-item:last-child{border-bottom:none;}
+
+/* NOVASCORE RING */
+.score-ring{position:relative;display:inline-flex;align-items:center;justify-content:center;margin:.5rem auto;}
+
+/* STEP FLOW */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;margin:1rem 0;}
+.flow-step{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.5rem .75rem;font-size:.75rem;text-align:center;min-width:90px;}
+.flow-step .sn{font-size:.55rem;color:var(--green);font-family:'JetBrains Mono',monospace;margin-bottom:.15rem;}
+.flow-step .st{font-weight:700;color:var(--white);font-size:.75rem;}
+.flow-arrow{color:var(--green);font-size:1.2rem;flex-shrink:0;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.section{animation:fadeUp .45s ease both;}
+
+@media(max-width:860px){
+  .sidebar{display:none;} .main{margin-left:0;}
+  .hero{padding:2rem 1.5rem;} .section{padding:2rem 1.5rem;}
+  .comp-spec{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div><span class="nova">NOVA</span><span class="pesa">PESA</span></div>
+    <div class="sub">UI/UX DESIGN GUIDE v2.0</div>
+  </div>
+  <div class="nav-section">FOUNDATION</div>
+  <a href="#tokens"     class="nav-item"><span class="nav-dot" style="background:var(--gold)"></span>Design Tokens</a>
+  <a href="#typography" class="nav-item"><span class="nav-dot" style="background:var(--green)"></span>Typography</a>
+  <a href="#components" class="nav-item"><span class="nav-dot" style="background:var(--teal)"></span>Components</a>
+  <a href="#navigation" class="nav-item"><span class="nav-dot" style="background:var(--purple)"></span>Navigation</a>
+  <div class="nav-section">ONBOARDING</div>
+  <a href="#onboarding" class="nav-item"><span class="nav-dot" style="background:var(--green)"></span>Sign Up & KYC</a>
+  <a href="#dashboard"  class="nav-item"><span class="nav-dot" style="background:var(--gold)"></span>Home Dashboard</a>
+  <div class="nav-section">16 PILLARS — V1 TOP 5</div>
+  <a href="#p01" class="nav-item"><span class="nav-dot" style="background:var(--gold)"></span>01 Money Diagnosis <span class="nav-badge new">NEW</span></a>
+  <a href="#p02" class="nav-item"><span class="nav-dot" style="background:var(--gold)"></span>02 NovaScore <span class="nav-badge new">NEW</span></a>
+  <a href="#p03" class="nav-item"><span class="nav-dot" style="background:var(--green)"></span>03 Learning</a>
+  <a href="#p04" class="nav-item"><span class="nav-dot" style="background:var(--purple)"></span>04 AI Advisor</a>
+  <a href="#p05" class="nav-item"><span class="nav-dot" style="background:var(--teal)"></span>05 Banking</a>
+  <div class="nav-section">PILLARS 06–16</div>
+  <a href="#p06" class="nav-item"><span class="nav-dot" style="background:var(--green2)"></span>06 Trading</a>
+  <a href="#p07" class="nav-item"><span class="nav-dot" style="background:var(--orange)"></span>07 Community</a>
+  <a href="#p08" class="nav-item"><span class="nav-dot" style="background:var(--blue)"></span>08 Business Tools</a>
+  <a href="#p09" class="nav-item"><span class="nav-dot" style="background:var(--blue)"></span>09 Marketplace</a>
+  <a href="#p10" class="nav-item"><span class="nav-dot" style="background:var(--red)"></span>10 Jobs</a>
+  <a href="#p11" class="nav-item"><span class="nav-dot" style="background:#334455"></span>11 Insurance</a>
+  <a href="#p12" class="nav-item"><span class="nav-dot" style="background:#553300"></span>12 Credit & RE</a>
+  <a href="#p13" class="nav-item"><span class="nav-dot" style="background:var(--teal)"></span>13 News</a>
+  <a href="#p14" class="nav-item"><span class="nav-dot" style="background:#005566"></span>14 Kids & Wealth</a>
+  <a href="#p15" class="nav-item"><span class="nav-dot" style="background:var(--red)"></span>15 Government</a>
+  <a href="#p16" class="nav-item"><span class="nav-dot" style="background:var(--purple)"></span>16 Corporate</a>
+  <div class="nav-section">SPECS</div>
+  <a href="#spacing" class="nav-item"><span class="nav-dot" style="background:var(--gray2)"></span>Spacing</a>
+  <a href="#states"  class="nav-item"><span class="nav-dot" style="background:var(--gray2)"></span>UI States</a>
+  <a href="#arch"    class="nav-item"><span class="nav-dot" style="background:var(--gold)"></span>Architecture</a>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">NOVAPESA · UI/UX DESIGN GUIDE v2.0 · 16 PILLARS · V1 UPDATED</div>
+  <h1>Design the <span>New Era</span><br>of Wealth.</h1>
+  <p>Complete visual specification for NovaPesa — every screen, every component, every interaction. Money Diagnosis and NovaScore are now Pillars 01 & 02. Built for your designer and co-founder.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">16</div><div class="lbl">PILLARS</div></div>
+    <div class="hero-stat"><div class="num">70+</div><div class="lbl">SCREENS</div></div>
+    <div class="hero-stat"><div class="num">5</div><div class="lbl">V1 CORE</div></div>
+    <div class="hero-stat"><div class="num">2</div><div class="lbl">NEW V1 PILLARS</div></div>
+  </div>
+</div>
+
+<!-- ════════════ FOUNDATION ════════════ -->
+<div class="section" id="tokens">
+  <div class="section-header">
+    <span class="section-num">FOUNDATION · 01</span>
+    <div><div class="section-title">Design Tokens — Colors</div><div class="section-sub">The complete NovaPesa color system. Never deviate.</div></div>
+  </div>
+  <div class="token-grid">
+    <div class="token-card"><div class="token-swatch" style="background:#080808;border-bottom:2px solid var(--gold)"></div><div class="token-info"><div class="token-name">Midnight Black</div><div class="token-hex">#080808</div><div class="token-use">Primary BG — every screen</div></div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#141414"></div><div class="token-info"><div class="token-name">Carbon Dark</div><div class="token-hex">#141414</div><div class="token-use">Sidebar, top bar, secondary BG</div></div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#1c1c1c"></div><div class="token-info"><div class="token-name">Card Surface</div><div class="token-hex">#1C1C1C</div><div class="token-use">Cards, modals, panels</div></div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#FFB400"></div><div class="token-info"><div class="token-name">Nova Gold</div><div class="token-hex">#FFB400</div><div class="token-use">Money values, primary CTAs</div></div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#00CC66"></div><div class="token-info"><div class="token-name">Savanna Green</div><div class="token-hex">#00CC66</div><div class="token-use">Success, growth, nav active</div></div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#004422"></div><div class="token-info"><div class="token-name">Deep Green</div><div class="token-hex">#004422</div><div class="token-use">Card gradients, headers, hover</div></div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#ffffff"></div><div class="token-info"><div class="token-name">Pure White</div><div class="token-hex">#FFFFFF</div><div class="token-use">Primary text, headings</div></div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#aaaaaa"></div><div class="token-info"><div class="token-name">Light Gray</div><div class="token-hex">#AAAAAA</div><div class="token-use">Secondary text, descriptions</div></div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#ff4444"></div><div class="token-info"><div class="token-name">Danger Red</div><div class="token-hex">#FF4444</div><div class="token-use">Errors, losses, sell, warnings</div></div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#007788"></div><div class="token-info"><div class="token-name">Teal</div><div class="token-hex">#007788</div><div class="token-use">Banking & Payments accent</div></div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#7744cc"></div><div class="token-info"><div class="token-name">Purple</div><div class="token-hex">#7744CC</div><div class="token-use">AI features, NovaScore, advisor</div></div></div>
+    <div class="token-card"><div class="token-swatch" style="background:#cc5500"></div><div class="token-info"><div class="token-name">Orange</div><div class="token-hex">#CC5500</div><div class="token-use">Community & Social accent</div></div></div>
+  </div>
+  <div class="warn"><strong>Rule:</strong> Gold = money values + primary CTAs only. Green = growth, success, navigation only. Dark theme always — never use a light background on any NovaPesa screen.</div>
+</div>
+
+<div class="section" id="typography">
+  <div class="section-header">
+    <span class="section-num">FOUNDATION · 02</span>
+    <div><div class="section-title">Typography System</div><div class="section-sub">Two fonts. Never add others.</div></div>
+  </div>
+  <div class="font-demo">
+    <div class="font-sample-h">NOVA<span style="font-weight:300;color:var(--white)">PESA</span></div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--white);margin-bottom:.3rem;">The New Era of Wealth.</div>
+    <div class="font-meta">Playfair Display — ALL headlines, screen titles, large numbers, the logo, NovaScore value</div>
+  </div>
+  <div class="font-demo">
+    <div style="font-size:1rem;color:var(--white);margin-bottom:.4rem;">Your <span style="color:var(--green);font-weight:700;">NovaScore is 74</span> — Wealth Builder. You improved 10 points this month.</div>
+    <div style="font-size:.85rem;color:var(--gray1);">Complete your next course to increase your Financial Knowledge Score and unlock live trading.</div>
+    <div class="font-meta">Lato — ALL body text, descriptions, labels, captions, button text, scores breakdown labels</div>
+  </div>
+  <table class="spec-table">
+    <tr><th>Element</th><th>Font</th><th>Size / Weight / Color</th></tr>
+    <tr><td>Screen Title</td><td>Playfair Display</td><td>24–28px · 700 · White</td></tr>
+    <tr><td>NovaScore Value</td><td>Playfair Display</td><td>48–64px · 900 · Gold — the biggest number on the app</td></tr>
+    <tr><td>Money Values</td><td>Playfair Display</td><td>20–48px · 700 · Gold #FFB400</td></tr>
+    <tr><td>Card Title</td><td>Lato</td><td>14–16px · 700 · White</td></tr>
+    <tr><td>Body / Description</td><td>Lato</td><td>14px · 400 · #AAAAAA</td></tr>
+    <tr><td>Labels / Captions</td><td>Lato</td><td>11–12px · 400 · #666666</td></tr>
+    <tr><td>Positive %</td><td>Lato</td><td>14px · 700 · Green #00CC66</td></tr>
+    <tr><td>Negative %</td><td>Lato</td><td>14px · 700 · Red #FF4444</td></tr>
+    <tr><td>Button Text</td><td>Lato</td><td>14px · 700 · Black on gold/green buttons</td></tr>
+    <tr><td>Nav Labels</td><td>Lato</td><td>10px · 400 · #666666 inactive · Gold active</td></tr>
+    <tr><td>Score Labels</td><td>Lato</td><td>11px · 700 · Uppercase · Letter-spacing 1px</td></tr>
+  </table>
+</div>
+
+<div class="section" id="components">
+  <div class="section-header">
+    <span class="section-num">FOUNDATION · 03</span>
+    <div><div class="section-title">Core Component Library</div><div class="section-sub">Reusable elements across all 16 pillars.</div></div>
+  </div>
+  <div class="comp-spec">
+    <div class="comp-box">
+      <h4>BUTTONS</h4>
+      <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.6rem;">
+        <div style="background:var(--gold);color:#080808;padding:.55rem 1.2rem;border-radius:6px;font-size:.8rem;font-weight:700;text-align:center;">Primary — Gold CTA</div>
+        <div style="background:var(--green);color:#080808;padding:.55rem 1.2rem;border-radius:6px;font-size:.8rem;font-weight:700;text-align:center;">Secondary — Green Action</div>
+        <div style="background:var(--purple);color:#fff;padding:.55rem 1.2rem;border-radius:6px;font-size:.8rem;font-weight:700;text-align:center;">AI / NovaScore — Purple</div>
+        <div style="border:1px solid var(--green);color:var(--green);padding:.55rem 1.2rem;border-radius:6px;font-size:.8rem;font-weight:700;text-align:center;">Outline — Tertiary</div>
+        <div style="background:#ff4444;color:#fff;padding:.55rem 1.2rem;border-radius:6px;font-size:.8rem;font-weight:700;text-align:center;">Danger — Destructive</div>
+      </div>
+      <div class="comp-item">Height: 44px mobile · 40px web</div>
+      <div class="comp-item">Radius: 6px standard · 22px pill</div>
+      <div class="comp-item">Loading: spinner replaces text</div>
+      <div class="comp-item">Purple button: AI-powered actions only</div>
+    </div>
+    <div class="comp-box">
+      <h4>NOVASCORE RING COMPONENT</h4>
+      <div style="text-align:center;padding:.5rem 0;">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="46" fill="none" stroke="#2a2a2a" stroke-width="8"/>
+          <circle cx="55" cy="55" r="46" fill="none" stroke="#FFB400" stroke-width="8"
+            stroke-dasharray="202 289" stroke-linecap="round" transform="rotate(-90 55 55)"/>
+          <text x="55" y="50" text-anchor="middle" font-family="Playfair Display" font-size="24" font-weight="900" fill="#FFB400">74</text>
+          <text x="55" y="64" text-anchor="middle" font-family="Lato" font-size="8" fill="#666666">/ 100</text>
+        </svg>
+        <div style="background:rgba(0,204,102,.1);border:1px solid var(--green);border-radius:20px;padding:.2rem .7rem;font-size:.65rem;color:var(--green);display:inline-block;margin-top:.3rem;">⚡ Wealth Builder</div>
+      </div>
+      <div class="comp-item">SVG ring — gold fill proportional to score</div>
+      <div class="comp-item">Score number: Playfair 900wt gold</div>
+      <div class="comp-item">Level badge pill below ring always</div>
+      <div class="comp-item">Ring color: Gold 71–100 · Green 51–70 · Orange 31–50 · Red 0–30</div>
+    </div>
+    <div class="comp-box">
+      <h4>INPUT FIELDS</h4>
+      <div style="margin-bottom:.6rem;">
+        <div style="font-size:.68rem;color:var(--gray2);margin-bottom:.25rem;">Monthly Income</div>
+        <div style="background:var(--black);border:1.5px solid var(--gold);border-radius:6px;padding:.45rem .7rem;font-size:.85rem;color:var(--white);">$500 – $1,000</div>
+      </div>
+      <div style="margin-bottom:.6rem;">
+        <div style="font-size:.68rem;color:var(--gray2);margin-bottom:.25rem;">Email Address</div>
+        <div style="background:var(--black);border:1px solid var(--border);border-radius:6px;padding:.45rem .7rem;font-size:.85rem;color:var(--gray2);">wiki@email.com</div>
+      </div>
+      <div class="comp-item">Focus: Gold 2px border</div>
+      <div class="comp-item">Error: Red #FF4444 + error text below</div>
+      <div class="comp-item">BG: Black #080808 always</div>
+    </div>
+    <div class="comp-box">
+      <h4>PILL SELECTORS (Questionnaire)</h4>
+      <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.6rem;">
+        <div style="background:var(--dkgreen);border:1px solid var(--green);border-radius:20px;padding:.3rem .65rem;font-size:.65rem;color:var(--green);">✓ Build wealth</div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:.3rem .65rem;font-size:.65rem;color:var(--gray2);">Save money</div>
+        <div style="background:var(--dkgreen);border:1px solid var(--green);border-radius:20px;padding:.3rem .65rem;font-size:.65rem;color:var(--green);">✓ Start trading</div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:.3rem .65rem;font-size:.65rem;color:var(--gray2);">Clear debt</div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:.3rem .65rem;font-size:.65rem;color:var(--gray2);">Retire early</div>
+      </div>
+      <div class="comp-item">Selected: dkgreen BG + green border + green text + ✓</div>
+      <div class="comp-item">Unselected: card BG + border + gray text</div>
+      <div class="comp-item">Used in: Money Diagnosis + Financial Profile Setup</div>
+      <div class="comp-item">NEVER use dropdowns for questionnaire questions</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="navigation">
+  <div class="section-header">
+    <span class="section-num">FOUNDATION · 04</span>
+    <div><div class="section-title">Navigation System</div><div class="section-sub">Mobile bottom nav + web sidebar. Consistent across all 16 pillars.</div></div>
+  </div>
+  <div class="comp-spec">
+    <div class="comp-box">
+      <h4>MOBILE — BOTTOM TAB BAR</h4>
+      <div style="background:var(--black);border:1px solid var(--border);border-radius:8px;padding:.8rem;margin-bottom:.8rem;">
+        <div style="display:flex;justify-content:space-around;padding:.4rem 0;">
+          <div style="text-align:center;"><div style="font-size:1rem;">🏠</div><div style="font-size:.5rem;color:var(--gold);margin-top:.15rem;">Home</div><div style="width:4px;height:4px;background:var(--gold);border-radius:50%;margin:.15rem auto 0;"></div></div>
+          <div style="text-align:center;"><div style="font-size:1rem;">🎯</div><div style="font-size:.5rem;color:var(--gray2);margin-top:.15rem;">Score</div></div>
+          <div style="text-align:center;"><div style="width:38px;height:38px;background:var(--gold);border-radius:50%;margin:-6px auto 0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">📊</div><div style="font-size:.5rem;color:var(--gray2);margin-top:.4rem;">Diagnose</div></div>
+          <div style="text-align:center;"><div style="font-size:1rem;">💳</div><div style="font-size:.5rem;color:var(--gray2);margin-top:.15rem;">Wallet</div></div>
+          <div style="text-align:center;"><div style="font-size:1rem;">📚</div><div style="font-size:.5rem;color:var(--gray2);margin-top:.15rem;">Learn</div></div>
+        </div>
+      </div>
+      <div class="comp-item">5 tabs: Home · Score · Diagnose (raised gold FAB) · Wallet · Learn</div>
+      <div class="comp-item">Active: Gold label + 4px gold dot below icon</div>
+      <div class="comp-item">Diagnose tab: Raised gold circle — primary action</div>
+      <div class="comp-item">Height: 64px + device safe area</div>
+    </div>
+    <div class="comp-box">
+      <h4>WEB — LEFT SIDEBAR</h4>
+      <div style="background:var(--carbon);border:1px solid var(--border);border-radius:8px;padding:.8rem;font-size:.75rem;margin-bottom:.8rem;">
+        <div style="color:var(--gold);font-weight:700;font-family:'Playfair Display',serif;font-size:.9rem;margin-bottom:.7rem;">NOVA<span style="font-weight:300;color:var(--white)">PESA</span></div>
+        <div style="display:flex;align-items:center;gap:.4rem;padding:.3rem .35rem;background:rgba(255,180,0,.06);border-left:2px solid var(--gold);border-radius:0 4px 4px 0;margin-bottom:.2rem;"><span>🏠</span><span style="color:var(--gold);font-size:.72rem;">Dashboard</span></div>
+        <div style="display:flex;align-items:center;gap:.4rem;padding:.3rem .35rem;margin-bottom:.15rem;color:var(--gray1);font-size:.72rem;"><span>📊</span><span>Money Diagnosis</span><span style="margin-left:auto;font-size:.5rem;background:var(--green);color:#000;padding:.1rem .3rem;border-radius:2px;font-weight:700;">NEW</span></div>
+        <div style="display:flex;align-items:center;gap:.4rem;padding:.3rem .35rem;margin-bottom:.15rem;color:var(--gray1);font-size:.72rem;"><span>🎯</span><span>NovaScore</span><span style="margin-left:auto;font-size:.5rem;background:var(--green);color:#000;padding:.1rem .3rem;border-radius:2px;font-weight:700;">NEW</span></div>
+        <div style="display:flex;align-items:center;gap:.4rem;padding:.3rem .35rem;margin-bottom:.15rem;color:var(--gray1);font-size:.72rem;"><span>📚</span><span>Learn</span></div>
+        <div style="display:flex;align-items:center;gap:.4rem;padding:.3rem .35rem;color:var(--gray1);font-size:.72rem;"><span>🤖</span><span>AI Advisor</span></div>
+      </div>
+      <div class="comp-item">Width: 248px · Collapse to 64px icon-only</div>
+      <div class="comp-item">All 16 pillars accessible from sidebar</div>
+      <div class="comp-item">Money Diagnosis + NovaScore get GREEN NEW badges</div>
+      <div class="comp-item">User avatar + NovaScore at bottom of sidebar</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ ONBOARDING ════════════ -->
+<div class="section" id="onboarding">
+  <div class="section-header">
+    <span class="section-num">ONBOARDING</span>
+    <div><div class="section-title">Sign Up, KYC & Financial Profile Setup</div><div class="section-sub">The funnel that leads users into the Money Diagnosis.</div></div>
+  </div>
+  <div class="note"><strong>Flow:</strong> Splash → Welcome (with "Free Diagnosis" CTA) → Sign Up (3 steps) → KYC → Financial Profile Setup → NovaScore Reveal → Dashboard. The Money Diagnosis can also be accessed WITHOUT signing up first — this is the viral entry point.</div>
+  <div class="screens-grid">
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Welcome Screen</span><span class="screen-tag">ENTRY</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="text-align:center;padding:.5rem 0 .6rem;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:var(--gold);">NOVA<span style="font-weight:300;color:var(--white)">PESA</span></div>
+          <div style="font-size:.6rem;color:var(--gray2);letter-spacing:2px;margin:.2rem 0 .6rem;">THE NEW ERA OF WEALTH</div>
+        </div>
+        <div style="background:linear-gradient(135deg,var(--dkgreen),#001a08);border:1.5px solid var(--gold);border-radius:8px;padding:.65rem;margin-bottom:.5rem;text-align:center;">
+          <div style="font-size:.6rem;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:.2rem;">FREE · 2 MINUTES</div>
+          <div style="font-family:'Playfair Display',serif;font-size:.85rem;color:var(--white);font-weight:700;margin-bottom:.15rem;">Check Your Financial Health</div>
+          <div style="font-size:.6rem;color:var(--gray1);margin-bottom:.4rem;">Get your NovaScore instantly. No sign-up needed.</div>
+          <div style="background:var(--gold);border-radius:4px;padding:.3rem;font-size:.65rem;font-weight:700;color:#080808;">Get My Free NovaScore →</div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:4px;padding:.3rem;text-align:center;font-size:.6rem;color:var(--gray2);">Already have an account? Sign in</div>
+      </div>
+      <div class="screen-desc"><p>The Money Diagnosis CTA is the hero element — gold bordered card, bigger than anything else. "No sign-up needed" removes friction. Secondary CTA for existing users below.</p></div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Financial Profile Setup</span><span class="screen-tag">ONBOARDING</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="font-size:.55rem;color:var(--green);letter-spacing:2px;margin-bottom:.25rem;">QUESTION 3 OF 8</div>
+        <div class="mock-progress"><div class="mock-progress-fill" style="width:37%"></div></div>
+        <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:var(--white);font-weight:700;margin:.5rem 0 .2rem;">What are your financial goals?</div>
+        <div style="font-size:.58rem;color:var(--gray1);margin-bottom:.5rem;">Select all that apply</div>
+        <div style="display:flex;flex-wrap:wrap;gap:.25rem;margin-bottom:.5rem;">
+          <span class="mock-pill">✓ Build wealth</span>
+          <span class="mock-pill inactive">Save money</span>
+          <span class="mock-pill">✓ Start trading</span>
+          <span class="mock-pill inactive">Clear debt</span>
+          <span class="mock-pill">✓ Start a business</span>
+          <span class="mock-pill inactive">Retire early</span>
+        </div>
+        <div style="background:var(--gold);border-radius:4px;padding:.32rem;text-align:center;font-size:.65rem;font-weight:700;color:#080808;">Next →</div>
+      </div>
+      <div class="screen-desc"><p>8 questions total using pill selectors only — NEVER dropdowns. Progress bar fills as user answers. Questions: income, expenses, savings, debts, goals, experience, risk tolerance, main interest.</p></div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Home Dashboard</span><span class="screen-tag">POST-ONBOARD</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">
+          <div><div style="font-size:.52rem;color:var(--gray2);">Good morning,</div><div style="font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;">Wiki 👋</div></div>
+          <div style="width:26px;height:26px;border-radius:50%;background:var(--dkgreen);border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:var(--gold);">W</div>
+        </div>
+        <!-- NovaScore widget -->
+        <div style="background:linear-gradient(135deg,var(--dkgreen),#001a08);border:1px solid var(--gold);border-radius:8px;padding:.6rem;margin-bottom:.4rem;display:flex;align-items:center;gap:.6rem;">
+          <div style="text-align:center;flex-shrink:0;">
+            <svg width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="#2a2a2a" stroke-width="4"/><circle cx="25" cy="25" r="20" fill="none" stroke="#FFB400" stroke-width="4" stroke-dasharray="88 126" stroke-linecap="round" transform="rotate(-90 25 25)"/><text x="25" y="29" text-anchor="middle" font-family="Playfair Display" font-size="11" font-weight="900" fill="#FFB400">74</text></svg>
+          </div>
+          <div style="flex:1;"><div style="font-size:.55rem;color:var(--gray2);">NOVASCORE</div><div style="font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;color:var(--gold);">74 / 100</div><div style="font-size:.55rem;color:var(--green);">⚡ Wealth Builder · +6 this week</div><div class="mock-progress" style="margin:.25rem 0;"><div class="mock-progress-fill" style="width:74%"></div></div><div style="font-size:.5rem;color:var(--gray2);">11 pts to Elite Investor</div></div>
+        </div>
+        <!-- Net worth -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.45rem .55rem;margin-bottom:.35rem;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:.5rem;color:var(--gray2);">NET WORTH</div><div style="font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--gold);">$4,820</div></div><div style="font-size:.6rem;color:var(--green);">▲ +12.4%</div></div>
+        <!-- AI insight -->
+        <div style="background:rgba(119,68,204,.1);border:1px solid var(--purple);border-radius:6px;padding:.4rem .5rem;font-size:.58rem;color:var(--gray1);"><span style="color:var(--purple);font-weight:700;">🤖 Nova AI:</span> Your Investment Score dropped 3pts. Adding $20 to your portfolio fixes it.</div>
+        <div class="mock-bottomnav">
+          <div class="mock-navitem active"><span>🏠</span><span>Home</span></div>
+          <div class="mock-navitem"><span>🎯</span><span>Score</span></div>
+          <div class="mock-navitem"><span>📊</span><span>Diagnose</span></div>
+          <div class="mock-navitem"><span>💳</span><span>Wallet</span></div>
+          <div class="mock-navitem"><span>📚</span><span>Learn</span></div>
+        </div>
+      </div>
+      <div class="screen-desc"><p>NovaScore widget is the #1 hero element on the dashboard — always top and prominent. Net worth card below it. AI insight card. 90-Day Plan progress. Savings + Learning widgets below.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ PILLAR 01 — MONEY DIAGNOSIS ════════════ -->
+<div class="section" id="p01">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#1a1000,#0d0800);">
+    <div class="pillar-num" style="color:var(--gold);">01</div>
+    <div class="pillar-info">
+      <h2>Free AI Money Diagnosis <span class="v1-badge">V1 CORE</span> <span class="new-badge">NEW</span></h2>
+      <p>NovaPesa's viral growth engine — free 2-minute financial health checkup. The Credit Karma of the Global South.</p>
+    </div>
+  </div>
+  <div class="note"><strong>Strategic Purpose:</strong> This is NOT just a feature — it's the entire acquisition strategy. Users reach NovaPesa.com, see "Check Your Financial Health Free in 2 Minutes", answer 8 questions, get their NovaScore, share it on WhatsApp/Twitter/Instagram, and that's how the platform grows organically. Zero ad spend needed.</div>
+
+  <!-- User journey flow -->
+  <div style="margin-bottom:1.5rem;">
+    <div style="font-size:.8rem;font-weight:700;color:var(--white);margin-bottom:.6rem;">The 7-Step User Journey:</div>
+    <div class="flow">
+      <div class="flow-step"><div class="sn">STEP 1</div><div class="st">Landing Page</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="sn">STEP 2</div><div class="st">8 Questions</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="sn">STEP 3</div><div class="st">AI Processes</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="sn">STEP 4</div><div class="st">Score Reveal</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="sn">STEP 5</div><div class="st">Plan Preview</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="sn">STEP 6</div><div class="st">Share → Viral</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="border-color:var(--gold);"><div class="sn">STEP 7</div><div class="st" style="color:var(--gold);">Sign Up CTA</div></div>
+    </div>
+  </div>
+
+  <div class="screens-grid">
+    <div class="screen-card" style="border-color:var(--gold);">
+      <div class="screen-label" style="background:#1a1000;"><span class="screen-name" style="color:var(--gold);">Landing — Diagnosis CTA</span><span class="screen-tag" style="color:var(--gold);background:rgba(255,180,0,.1);">STEP 1</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="text-align:center;padding:.3rem 0 .5rem;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--gold);">NOVA<span style="font-weight:300;color:var(--white)">PESA</span></div>
+        </div>
+        <div style="background:linear-gradient(135deg,var(--dkgreen),#001a08);border:2px solid var(--gold);border-radius:10px;padding:1rem;text-align:center;margin-bottom:.5rem;">
+          <div style="font-size:.55rem;color:var(--gold);letter-spacing:3px;font-weight:700;margin-bottom:.3rem;">FREE · 2 MINUTES · NO SIGN-UP</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--white);font-weight:700;margin-bottom:.2rem;">Check Your Financial<br/>Health Right Now</div>
+          <div style="font-size:.6rem;color:var(--gray1);margin-bottom:.6rem;">8 quick questions · Instant AI analysis · Your personal NovaScore</div>
+          <div style="background:var(--gold);border-radius:6px;padding:.4rem;font-size:.75rem;font-weight:700;color:#080808;letter-spacing:.5px;">Get My Free NovaScore →</div>
+          <div style="font-size:.55rem;color:var(--gray2);margin-top:.35rem;">Join 10,000+ people who know their score</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem;">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:.4rem;text-align:center;font-size:.55rem;color:var(--gray1);">🎯<br/>Personal Score</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:.4rem;text-align:center;font-size:.55rem;color:var(--gray1);">🤖<br/>AI Plan</div>
+        </div>
+      </div>
+      <div class="screen-desc"><p>The gold-bordered CTA card is the ONLY thing that matters on this screen. Bold headline. "No sign-up needed" eliminates friction. Social proof counter. Two feature preview tiles below for trust-building.</p></div>
+    </div>
+
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Question Screen</span><span class="screen-tag">STEP 2 · 8 QUESTIONS</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem;">
+          <div style="font-size:.55rem;color:var(--green);letter-spacing:1px;font-family:'JetBrains Mono',monospace;">QUESTION 4 / 8</div>
+          <div style="font-size:.55rem;color:var(--gray2);">~1 min left</div>
+        </div>
+        <div class="mock-progress" style="margin-bottom:.5rem;"><div class="mock-progress-fill" style="width:50%"></div></div>
+        <div style="font-family:'Playfair Display',serif;font-size:.9rem;color:var(--white);font-weight:700;margin-bottom:.2rem;">Do you currently invest?</div>
+        <div style="font-size:.58rem;color:var(--gray1);margin-bottom:.5rem;">Select your closest answer</div>
+        <div style="display:flex;flex-direction:column;gap:.25rem;margin-bottom:.5rem;">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.4rem .6rem;font-size:.65rem;color:var(--gray1);">No, I've never invested</div>
+          <div style="background:var(--dkgreen);border:1px solid var(--green);border-radius:6px;padding:.4rem .6rem;font-size:.65rem;color:var(--green);font-weight:700;">✓ Yes, occasionally</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.4rem .6rem;font-size:.65rem;color:var(--gray1);">Yes, I invest regularly</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.4rem .6rem;font-size:.65rem;color:var(--gray1);">I'm an experienced investor</div>
+        </div>
+        <div style="background:var(--gold);border-radius:4px;padding:.32rem;text-align:center;font-size:.65rem;font-weight:700;color:#080808;">Next →</div>
+      </div>
+      <div class="screen-desc"><p>8 questions total (income, expenses, savings, debts, investments, side income, goals, biggest challenge). Single or multi-select depending on question. Selected = green. No dropdowns, no text inputs — only tappable options.</p></div>
+    </div>
+
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">AI Processing Screen</span><span class="screen-tag">STEP 3 · ANTICIPATION</span></div>
+      <div class="screen-mockup" style="background:#080808;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+        <div style="width:60px;height:60px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:.8rem;box-shadow:0 0 20px rgba(119,68,204,.4);">🤖</div>
+        <div style="font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:.3rem;">Nova AI is analysing<br/>your finances...</div>
+        <div style="font-size:.6rem;color:var(--gray1);margin-bottom:1rem;">Calculating your personal NovaScore</div>
+        <!-- animated dots -->
+        <div style="display:flex;gap:.4rem;margin-bottom:.8rem;">
+          <div style="width:8px;height:8px;background:var(--gold);border-radius:50%;opacity:.3;"></div>
+          <div style="width:8px;height:8px;background:var(--gold);border-radius:50%;opacity:.7;"></div>
+          <div style="width:8px;height:8px;background:var(--gold);border-radius:50%;"></div>
+        </div>
+        <div style="font-size:.58rem;color:var(--gray2);">Comparing with 10,000+ users like you</div>
+      </div>
+      <div class="screen-desc"><p>3-second loading screen. Purple AI avatar glows. Animated dots build suspense. "Comparing with users like you" adds social context. The wait makes the score reveal feel earned and meaningful.</p></div>
+    </div>
+
+    <div class="screen-card" style="border-color:var(--gold);">
+      <div class="screen-label" style="background:#1a1000;"><span class="screen-name" style="color:var(--gold);">Score Reveal Screen</span><span class="screen-tag" style="color:var(--gold);background:rgba(255,180,0,.1);">STEP 4 · THE MOMENT</span></div>
+      <div class="screen-mockup" style="background:#080808;text-align:center;">
+        <div style="font-size:.58rem;color:var(--gray1);margin-bottom:.4rem;">Your Financial Health Score</div>
+        <!-- Big score ring -->
+        <svg width="100" height="100" viewBox="0 0 100 100" style="display:block;margin:0 auto .4rem;">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#2a2a2a" stroke-width="7"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#FFB400" stroke-width="7"
+            stroke-dasharray="166 264" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+          <text x="50" y="46" text-anchor="middle" font-family="Playfair Display" font-size="22" font-weight="900" fill="#FFB400">64</text>
+          <text x="50" y="59" text-anchor="middle" font-family="Lato" font-size="7.5" fill="#666">/ 100</text>
+        </svg>
+        <div style="background:rgba(0,204,102,.1);border:1px solid var(--green);border-radius:20px;padding:.2rem .7rem;font-size:.65rem;color:var(--green);display:inline-block;margin-bottom:.5rem;">⚡ Wealth Starter</div>
+        <div style="font-size:.6rem;color:var(--gray1);margin-bottom:.5rem;">Financial Health: <span style="color:var(--gold);">Moderate</span> · Top 58% of users</div>
+        <div style="display:flex;flex-direction:column;gap:.2rem;margin-bottom:.5rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:.58rem;color:var(--gray2);">Savings</span><div style="flex:1;margin:0 .4rem;"><div class="mock-progress" style="margin:0;"><div class="mock-progress-fill" style="width:55%;background:var(--gold);"></div></div></div><span style="font-size:.6rem;font-weight:700;color:var(--gold);">55</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:.58rem;color:var(--gray2);">Investment</span><div style="flex:1;margin:0 .4rem;"><div class="mock-progress" style="margin:0;"><div class="mock-progress-fill" style="width:48%;background:#ff4444;"></div></div></div><span style="font-size:.6rem;font-weight:700;color:#ff4444;">48</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:.58rem;color:var(--gray2);">Spending</span><div style="flex:1;margin:0 .4rem;"><div class="mock-progress" style="margin:0;"><div class="mock-progress-fill" style="width:72%;"></div></div></div><span style="font-size:.6rem;font-weight:700;color:var(--green);">72</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:.58rem;color:var(--gray2);">Knowledge</span><div style="flex:1;margin:0 .4rem;"><div class="mock-progress" style="margin:0;"><div class="mock-progress-fill" style="width:80%;"></div></div></div><span style="font-size:.6rem;font-weight:700;color:var(--green);">80</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:.58rem;color:var(--gray2);">Income</span><div style="flex:1;margin:0 .4rem;"><div class="mock-progress" style="margin:0;"><div class="mock-progress-fill" style="width:60%;background:var(--gold);"></div></div></div><span style="font-size:.6rem;font-weight:700;color:var(--gold);">60</span></div>
+        </div>
+      </div>
+      <div class="screen-desc"><p>This is THE moment. Score animates up from 0. Ring fills in gold. Each sub-score bar animates in sequence. AI interpretation text below: which score is strongest, which needs most attention. Color-coded bars: green 70+, gold 50–69, red below 50.</p></div>
+    </div>
+
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">90-Day Plan Preview</span><span class="screen-tag">STEP 5 · TEASER</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;color:var(--white);margin-bottom:.3rem;">Your 90-Day Wealth Plan</div>
+        <div style="font-size:.58rem;color:var(--gray1);margin-bottom:.5rem;">Generated by Nova AI based on your results</div>
+        <div style="background:var(--dkgreen);border:1px solid var(--green);border-radius:6px;padding:.5rem;margin-bottom:.3rem;">
+          <div style="font-size:.62rem;font-weight:700;color:var(--white);margin-bottom:.3rem;">Month 1 — Build Your Foundation</div>
+          <div style="font-size:.6rem;color:var(--green);">• Save KES 5,000 emergency fund</div>
+          <div style="font-size:.6rem;color:var(--green);">• Complete Forex Fundamentals course</div>
+          <div style="font-size:.6rem;color:var(--green);">• Open demo trading account</div>
+        </div>
+        <!-- Blurred months -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.5rem;margin-bottom:.3rem;filter:blur(2px);position:relative;">
+          <div style="font-size:.62rem;font-weight:700;color:var(--white);margin-bottom:.2rem;">Month 2 — Start Growing</div>
+          <div style="font-size:.6rem;color:var(--gray2);">• Start investing KES 2,000 monthly...</div>
+        </div>
+        <div style="background:rgba(255,180,0,.05);border:1px solid rgba(255,180,0,.3);border-radius:6px;padding:.4rem;text-align:center;">
+          <div style="font-size:.6rem;color:var(--gold);font-weight:700;">🔓 Create free account to unlock Month 2 & 3</div>
+        </div>
+      </div>
+      <div class="screen-desc"><p>Month 1 is fully visible — valuable free content. Months 2 and 3 are blurred with a lock. "Create free account to unlock" gold CTA. This is the conversion moment — user already has value, wants more.</p></div>
+    </div>
+
+    <div class="screen-card" style="border-color:var(--green);">
+      <div class="screen-label" style="background:var(--dkgreen);"><span class="screen-name" style="color:var(--white);">Share Your NovaScore</span><span class="screen-tag" style="color:var(--green);background:rgba(0,204,102,.1);">STEP 6 · VIRAL</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;margin-bottom:.3rem;">Tell your friends! 🔥</div>
+        <div style="font-size:.6rem;color:var(--gray1);margin-bottom:.5rem;">Challenge them to beat your score</div>
+        <!-- Shareable card preview -->
+        <div style="background:linear-gradient(135deg,var(--dkgreen),#001a08);border:1.5px solid var(--gold);border-radius:8px;padding:.7rem;margin-bottom:.5rem;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:.7rem;font-weight:700;color:var(--gold);margin-bottom:.2rem;">NOVA<span style="font-weight:300;color:var(--white)">PESA</span></div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--gold);">64</div>
+          <div style="font-size:.55rem;color:var(--gray2);">My NovaScore</div>
+          <div style="background:rgba(0,204,102,.1);border:1px solid var(--green);border-radius:20px;padding:.15rem .5rem;font-size:.55rem;color:var(--green);display:inline-block;margin:.2rem 0;">⚡ Wealth Starter</div>
+          <div style="font-size:.5rem;color:var(--gray2);">novapesa.com · #GrowBeyond</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem;">
+          <div style="background:#25D366;border-radius:5px;padding:.3rem;text-align:center;font-size:.58rem;font-weight:700;color:white;">WhatsApp</div>
+          <div style="background:var(--black);border:1px solid var(--border);border-radius:5px;padding:.3rem;text-align:center;font-size:.58rem;font-weight:700;color:white;">𝕏 Twitter</div>
+          <div style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);border-radius:5px;padding:.3rem;text-align:center;font-size:.58rem;font-weight:700;color:white;">Instagram</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:.3rem;text-align:center;font-size:.58rem;color:var(--gray1);">Copy Link</div>
+        </div>
+      </div>
+      <div class="screen-desc"><p>Share screen appears BEFORE the sign-up CTA. Pre-built share card (downloadable PNG). Pre-written text: "My NovaScore is 64. What's yours? 🔥 novapesa.com #NovaPesa #GrowBeyond". This is the viral loop that drives organic growth.</p></div>
+    </div>
+
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Sign Up CTA Screen</span><span class="screen-tag">STEP 7 · CONVERT</span></div>
+      <div class="screen-mockup" style="background:#080808;text-align:center;">
+        <div style="font-size:1.5rem;margin-bottom:.3rem;">🎉</div>
+        <div style="font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--white);margin-bottom:.2rem;">Track your NovaScore<br/>over time</div>
+        <div style="font-size:.6rem;color:var(--gray1);margin-bottom:.6rem;">Create your free account to unlock your full 90-Day Plan, improve your score, and start growing.</div>
+        <div style="background:var(--gold);border-radius:6px;padding:.4rem;font-size:.7rem;font-weight:700;color:#080808;margin-bottom:.3rem;">Create Free Account →</div>
+        <div style="font-size:.55rem;color:var(--gray2);margin-bottom:.5rem;">Your profile answers are already saved. Sign up takes 30 seconds.</div>
+        <div style="border:1px solid var(--border);border-radius:5px;padding:.3rem;font-size:.6rem;color:var(--gray2);">Maybe later — bookmark my score</div>
+      </div>
+      <div class="screen-desc"><p>Key insight: their profile data is ALREADY saved from the questionnaire. Sign-up is fast — just email + password. "Maybe later" keeps them in the funnel. Even without signing up, they got value and shared their score.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ PILLAR 02 — NOVASCORE ════════════ -->
+<div class="section" id="p02">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#1a0a00,#0d0500);">
+    <div class="pillar-num" style="color:var(--gold);">02</div>
+    <div class="pillar-info">
+      <h2>NovaScore System <span class="v1-badge">V1 CORE</span> <span class="new-badge">NEW</span></h2>
+      <p>NovaPesa's proprietary 0–100 financial health score. 5 sub-scores. AI-powered recommendations. Gamification levels. The #1 retention feature.</p>
+    </div>
+  </div>
+  <div class="warn"><strong>The 5 Sub-Scores:</strong> Savings Score · Investment Score · Income Growth Score · Financial Knowledge Score · Spending Control Score. Each 0–100. Final NovaScore = weighted average. All update in real-time as user takes action.</div>
+
+  <!-- Level system visual -->
+  <div style="margin:1.5rem 0;">
+    <div style="font-size:.85rem;font-weight:700;color:var(--white);margin-bottom:.8rem;">Gamification Level System:</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.7rem;text-align:center;">
+        <div style="font-size:.6rem;color:var(--gray2);margin-bottom:.2rem;">0–30</div>
+        <div style="font-size:.75rem;font-weight:700;color:var(--gray1);">Beginner</div>
+        <div style="font-size:.5rem;color:var(--gray2);margin-top:.2rem;">Demo only</div>
+      </div>
+      <div style="background:rgba(0,170,85,.1);border:1px solid var(--green2);border-radius:8px;padding:.7rem;text-align:center;">
+        <div style="font-size:.6rem;color:var(--green2);margin-bottom:.2rem;">31–50</div>
+        <div style="font-size:.75rem;font-weight:700;color:var(--green);">Builder</div>
+        <div style="font-size:.5rem;color:var(--green2);margin-top:.2rem;">+ Community</div>
+      </div>
+      <div style="background:rgba(0,204,102,.1);border:1px solid var(--green);border-radius:8px;padding:.7rem;text-align:center;">
+        <div style="font-size:.6rem;color:var(--green);margin-bottom:.2rem;">51–70</div>
+        <div style="font-size:.75rem;font-weight:700;color:var(--green);">Wealth Starter</div>
+        <div style="font-size:.5rem;color:var(--green);margin-top:.2rem;">+ Live charts</div>
+      </div>
+      <div style="background:rgba(255,180,0,.1);border:1px solid var(--gold);border-radius:8px;padding:.7rem;text-align:center;">
+        <div style="font-size:.6rem;color:var(--gold);margin-bottom:.2rem;">71–85</div>
+        <div style="font-size:.75rem;font-weight:700;color:var(--gold);">Wealth Builder</div>
+        <div style="font-size:.5rem;color:var(--gold);margin-top:.2rem;">+ AI alerts</div>
+      </div>
+      <div style="background:rgba(255,60,0,.1);border:1px solid #ff4444;border-radius:8px;padding:.7rem;text-align:center;">
+        <div style="font-size:.6rem;color:#ff4444;margin-bottom:.2rem;">86–100</div>
+        <div style="font-size:.75rem;font-weight:700;color:#ff6644;">Elite Investor</div>
+        <div style="font-size:.5rem;color:#ff6644;margin-top:.2rem;">Free Pro sub</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screens-grid">
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">NovaScore Full Breakdown</span><span class="screen-tag">MAIN SCREEN</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="text-align:center;margin-bottom:.5rem;">
+          <svg width="90" height="90" viewBox="0 0 90 90" style="display:block;margin:0 auto .3rem;">
+            <circle cx="45" cy="45" r="38" fill="none" stroke="#2a2a2a" stroke-width="7"/>
+            <circle cx="45" cy="45" r="38" fill="none" stroke="#FFB400" stroke-width="7"
+              stroke-dasharray="168 239" stroke-linecap="round" transform="rotate(-90 45 45)"/>
+            <text x="45" y="41" text-anchor="middle" font-family="Playfair Display" font-size="20" font-weight="900" fill="#FFB400">74</text>
+            <text x="45" y="54" text-anchor="middle" font-family="Lato" font-size="7" fill="#666">/ 100</text>
+          </svg>
+          <div style="background:rgba(255,180,0,.1);border:1px solid var(--gold);border-radius:20px;padding:.2rem .7rem;font-size:.62rem;color:var(--gold);display:inline-block;">⚡ Wealth Builder · +6 this week</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:.4rem .5rem;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:.2rem;"><span style="font-size:.62rem;color:var(--gray1);">💰 Savings Score</span><span style="font-size:.65rem;font-weight:700;color:var(--gold);">70</span></div>
+            <div class="mock-progress" style="margin:0;"><div class="mock-progress-fill" style="width:70%;"></div></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:.4rem .5rem;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:.2rem;"><span style="font-size:.62rem;color:var(--gray1);">📈 Investment Score</span><span style="font-size:.65rem;font-weight:700;color:var(--green);">80</span></div>
+            <div class="mock-progress" style="margin:0;"><div class="mock-progress-fill" style="width:80%;"></div></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:.4rem .5rem;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:.2rem;"><span style="font-size:.62rem;color:var(--gray1);">🧠 Knowledge Score</span><span style="font-size:.65rem;font-weight:700;color:var(--green);">82</span></div>
+            <div class="mock-progress" style="margin:0;"><div class="mock-progress-fill" style="width:82%;"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-desc"><p>Large circular score ring at top — this is the hero element. Level badge below it. All 5 sub-score bars below with icons. Tap any sub-score to see breakdown and AI recommendations to improve it.</p></div>
+    </div>
+
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Score History Chart</span><span class="screen-tag">PROGRESS</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:.4rem;"><div style="font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;">Score History</div><div style="display:flex;gap:.25rem;"><span class="mock-pill inactive" style="padding:.15rem .4rem;font-size:.5rem;">7D</span><span class="mock-pill" style="padding:.15rem .4rem;font-size:.5rem;">30D</span><span class="mock-pill inactive" style="padding:.15rem .4rem;font-size:.5rem;">3M</span></div></div>
+        <!-- Simple chart -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.6rem;margin-bottom:.4rem;">
+          <div style="display:flex;align-items:flex-end;gap:.3rem;height:55px;">
+            <div style="flex:1;background:rgba(0,204,102,.3);border-radius:2px 2px 0 0;" data-h="40%"></div>
+            <div style="flex:1;background:rgba(0,204,102,.3);border-radius:2px 2px 0 0;" data-h="50%"></div>
+            <div style="flex:1;background:rgba(0,204,102,.4);border-radius:2px 2px 0 0;" data-h="55%"></div>
+            <div style="flex:1;background:rgba(0,204,102,.5);border-radius:2px 2px 0 0;" data-h="60%"></div>
+            <div style="flex:1;background:rgba(0,204,102,.6);border-radius:2px 2px 0 0;" data-h="65%"></div>
+            <div style="flex:1;background:rgba(0,204,102,.7);border-radius:2px 2px 0 0;" data-h="70%"></div>
+            <div style="flex:1;background:var(--gold);border-radius:2px 2px 0 0;" data-h="74%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:.2rem;font-size:.48rem;color:var(--gray2);"><span>Mar 1</span><span>Mar 5</span><span>Mar 10</span><span>Mar 15</span><span>Mar 20</span><span>Mar 25</span><span>Today</span></div>
+        </div>
+        <div style="background:rgba(0,204,102,.05);border:1px solid var(--green);border-radius:5px;padding:.35rem .5rem;font-size:.6rem;color:var(--green);">📈 You improved 14 points this month! Keep it up.</div>
+      </div>
+      <div class="screen-desc"><p>Bar chart showing daily score. Hover/tap a bar shows what action caused the change (e.g. "Completed course +3pts"). Last bar is always gold — current score. Milestone events shown as gold star markers.</p></div>
+    </div>
+
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Improve My Score</span><span class="screen-tag">AI TIPS</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;margin-bottom:.3rem;">Improve Your Score</div>
+        <div style="font-size:.58rem;color:var(--gray1);margin-bottom:.5rem;">Ranked by impact — quickest wins first</div>
+        <div style="background:var(--card);border:1px solid var(--green);border-radius:6px;padding:.5rem;margin-bottom:.3rem;">
+          <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.2rem;">
+            <div style="background:var(--dkgreen);border:1px solid var(--green);border-radius:4px;padding:.1rem .35rem;font-size:.55rem;color:var(--green);font-weight:700;">+8 pts</div>
+            <div style="font-size:.65rem;font-weight:700;color:var(--white);">Complete Crypto Basics course</div>
+          </div>
+          <div style="font-size:.58rem;color:var(--gray2);margin-bottom:.3rem;">Boosts your Knowledge Score from 80 → 88</div>
+          <div style="background:var(--green);border-radius:4px;padding:.25rem;text-align:center;font-size:.58rem;font-weight:700;color:#080808;">Start Course →</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.5rem;">
+          <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.2rem;">
+            <div style="background:#1a1000;border:1px solid var(--gold);border-radius:4px;padding:.1rem .35rem;font-size:.55rem;color:var(--gold);font-weight:700;">+5 pts</div>
+            <div style="font-size:.65rem;font-weight:700;color:var(--white);">Save KES 2,000 this week</div>
+          </div>
+          <div style="font-size:.58rem;color:var(--gray2);">Adds to emergency fund · Boosts Savings Score</div>
+        </div>
+      </div>
+      <div class="screen-desc"><p>AI recommendations ranked by point gain. Each tip: points badge (green for high, gold for medium), action, which sub-score it improves, direct CTA. "Quick wins" filter at top. Completing actions awards points with animation.</p></div>
+    </div>
+
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Share NovaScore Card</span><span class="screen-tag">VIRAL FEATURE</span></div>
+      <div class="screen-mockup" style="background:#080808;text-align:center;">
+        <div style="font-size:.62rem;color:var(--gray1);margin-bottom:.4rem;">Share your achievement</div>
+        <div style="background:linear-gradient(135deg,var(--dkgreen),#001a08);border:1.5px solid var(--gold);border-radius:10px;padding:1rem;margin-bottom:.5rem;display:inline-block;width:100%;max-width:180px;">
+          <div style="font-family:'Playfair Display',serif;font-size:.8rem;font-weight:700;color:var(--gold);margin-bottom:.3rem;">NOVA<span style="font-weight:300;color:var(--white)">PESA</span></div>
+          <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--gold);">74</div>
+          <div style="font-size:.55rem;color:var(--gray2);">NovaScore</div>
+          <div style="background:rgba(255,180,0,.15);border:1px solid var(--gold);border-radius:20px;padding:.15rem .5rem;font-size:.52rem;color:var(--gold);display:inline-block;margin:.25rem 0;">⚡ Wealth Builder</div>
+          <div style="font-size:.48rem;color:var(--gray2);">novapesa.com</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem;">
+          <div style="background:#25D366;border-radius:4px;padding:.3rem;font-size:.58rem;font-weight:700;color:white;">WhatsApp</div>
+          <div style="background:var(--black);border:1px solid var(--border);border-radius:4px;padding:.3rem;font-size:.58rem;font-weight:700;color:white;">𝕏 Twitter</div>
+          <div style="background:linear-gradient(135deg,#833ab4,#fd1d1d);border-radius:4px;padding:.3rem;font-size:.58rem;font-weight:700;color:white;">Instagram</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:.3rem;font-size:.58rem;color:var(--gray1);">Download PNG</div>
+        </div>
+      </div>
+      <div class="screen-desc"><p>Branded shareable card generated for each user. Pre-written text for each platform. Download as PNG for Instagram Stories. This appears on: score reveal screen, score breakdown screen, and after every level-up. This is the viral growth loop.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ PILLAR 03 — LEARNING ════════════ -->
+<div class="section" id="p03">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,var(--dkgreen),#001a0d);">
+    <div class="pillar-num" style="color:var(--green);">03</div>
+    <div class="pillar-info"><h2>Learning & Education <span class="v1-badge">V1 CORE</span></h2><p>50+ courses on forex, crypto, stocks, business, personal finance. Quizzes, certificates, live webinars.</p></div>
+  </div>
+  <div class="note"><strong>Connection to NovaScore:</strong> Every course completed = +3–8 pts to Financial Knowledge Score. Every quiz passed at 80%+ = +2 pts. Every certificate earned = +5 pts. Learning is the fastest way to improve NovaScore for new users.</div>
+  <div class="screens-grid">
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Course Library</span><span class="screen-tag">BROWSE</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="display:flex;gap:.25rem;margin-bottom:.45rem;overflow-x:auto;">
+          <span class="mock-pill">All</span>
+          <span class="mock-pill inactive">Forex</span>
+          <span class="mock-pill inactive">Crypto</span>
+          <span class="mock-pill inactive">Stocks</span>
+          <span class="mock-pill inactive">Business</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.35rem;">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+            <div style="height:40px;background:linear-gradient(135deg,var(--dkgreen),#002211);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">📈</div>
+            <div style="padding:.4rem;"><div style="font-size:.62rem;font-weight:700;color:var(--white);">Forex Fundamentals</div><div style="font-size:.52rem;color:var(--gray2);">12 lessons · Beginner</div><div class="mock-progress" style="margin:.25rem 0;"><div class="mock-progress-fill" style="width:60%"></div></div><div style="font-size:.48rem;color:var(--green);">60% · +8 NovaScore pts</div></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+            <div style="height:40px;background:linear-gradient(135deg,#1a0030,#0d0020);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">₿</div>
+            <div style="padding:.4rem;"><div style="font-size:.62rem;font-weight:700;color:var(--white);">Crypto Basics</div><div style="font-size:.52rem;color:var(--gray2);">8 lessons · Beginner</div><div style="font-size:.48rem;color:var(--gray2);margin-top:.2rem;">Not started · +5 pts</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-desc"><p>Category filter tabs (pill style). 2-column course grid. Course card shows NovaScore points you'll earn. Progress bar for enrolled courses. "Featured" carousel at top. Search bar.</p></div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Video Lesson Player</span><span class="screen-tag">LEARNING</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="background:#000;border-radius:5px;height:75px;margin-bottom:.4rem;display:flex;align-items:center;justify-content:center;position:relative;"><div style="font-size:1.3rem;">▶️</div><div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--border);"><div style="width:40%;height:100%;background:var(--gold);"></div></div><div style="position:absolute;bottom:4px;right:5px;font-size:.48rem;color:var(--white);background:rgba(0,0,0,.6);padding:.1rem .25rem;border-radius:2px;">4:23 / 10:15</div></div>
+        <div style="font-family:'Playfair Display',serif;font-size:.82rem;font-weight:700;margin-bottom:.15rem;">Reading Candlestick Charts</div>
+        <div style="font-size:.58rem;color:var(--gray2);margin-bottom:.4rem;">Forex Fundamentals · Lesson 3 of 12</div>
+        <div style="display:flex;gap:.25rem;margin-bottom:.35rem;"><span class="mock-pill">Lesson</span><span class="mock-pill inactive">Quiz</span><span class="mock-pill inactive">Notes</span><span class="mock-pill inactive">Discussion</span></div>
+        <div style="font-size:.62rem;color:var(--gray1);">A candlestick represents price movement over a time period. The body shows open-to-close range...</div>
+      </div>
+      <div class="screen-desc"><p>Full-width video player with gold progress bar. Tabs: Lesson notes, Quiz, Discussion. Speed selector. Download for offline. Next/Previous lesson. Completing lesson awards NovaScore points (animated).</p></div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Certificate Screen</span><span class="screen-tag">ACHIEVEMENT</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="background:linear-gradient(135deg,var(--dkgreen),#001a0d);border:1px solid var(--green);border-radius:8px;padding:.9rem;text-align:center;margin-bottom:.4rem;">
+          <div style="font-size:.52rem;color:var(--green);letter-spacing:3px;margin-bottom:.25rem;">CERTIFICATE OF COMPLETION</div>
+          <div style="font-size:.52rem;color:var(--gray1);">This certifies that</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--gold);">Wiki</div>
+          <div style="font-size:.52rem;color:var(--gray1);">completed</div>
+          <div style="font-family:'Playfair Display',serif;font-size:.8rem;font-weight:700;color:var(--white);margin:.2rem 0;">Forex Fundamentals</div>
+          <div style="font-size:.48rem;color:var(--gray2);">NovaPesa · March 2026 · #NP-2026-4821</div>
+          <div style="display:flex;gap:.25rem;justify-content:center;margin-top:.4rem;">
+            <div style="background:var(--gold);color:#080808;border-radius:4px;padding:.22rem .5rem;font-size:.52rem;font-weight:700;">Download PDF</div>
+            <div style="border:1px solid var(--teal);color:var(--teal);border-radius:4px;padding:.22rem .5rem;font-size:.52rem;">LinkedIn</div>
+          </div>
+        </div>
+        <div style="background:rgba(0,204,102,.08);border:1px solid var(--green);border-radius:5px;padding:.35rem;text-align:center;font-size:.58rem;color:var(--green);">+5 NovaScore points earned 🎉</div>
+      </div>
+      <div class="screen-desc"><p>Premium certificate with NovaPesa branding. Certificate ID for verification. Download PDF + LinkedIn share. NovaScore points awarded notification. Adds to profile and My Learning dashboard.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ PILLAR 04 — AI ADVISOR ════════════ -->
+<div class="section" id="p04">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#1a0a30,#0d0520);">
+    <div class="pillar-num" style="color:var(--purple);">04</div>
+    <div class="pillar-info"><h2>AI Financial Advisor <span class="v1-badge">V1 CORE</span></h2><p>Nova AI — personalized wealth plans, 90-Day Money Plan, market alerts, behavioral insights, 24/7 chatbot.</p></div>
+  </div>
+  <div class="screens-grid">
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">AI Advisor Home</span><span class="screen-tag">MAIN</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="background:linear-gradient(135deg,#1a0a30,#0d0520);border:1px solid var(--purple);border-radius:8px;padding:.6rem;margin-bottom:.4rem;">
+          <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem;">
+            <div style="width:26px;height:26px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;">🤖</div>
+            <div><div style="font-size:.62rem;font-weight:700;color:var(--white);">Nova AI</div><div style="font-size:.5rem;color:var(--purple);">Your Personal Advisor</div></div>
+          </div>
+          <div style="font-size:.62rem;color:var(--gray1);">"Good morning Wiki. Portfolio up 12.4% this week. Your Investment Score hit 80 — you just levelled up to Wealth Builder! 🔥"</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.45rem;margin-bottom:.3rem;">
+          <div style="font-size:.55rem;color:var(--purple);letter-spacing:1px;margin-bottom:.25rem;">90-DAY PLAN · MONTH 1</div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:.15rem;"><span style="font-size:.58rem;color:var(--gray1);">Emergency Fund</span><span style="font-size:.58rem;color:var(--green);">3/3 done ✓</span></div>
+          <div class="mock-progress"><div class="mock-progress-fill" style="width:100%"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:.25rem;margin-bottom:.15rem;"><span style="font-size:.58rem;color:var(--gray1);">Start investing</span><span style="font-size:.58rem;color:var(--gold);">1/2 done</span></div>
+          <div class="mock-progress"><div class="mock-progress-fill" style="width:50%;background:var(--gold)"></div></div>
+        </div>
+        <div style="background:var(--gold);border-radius:4px;padding:.3rem;text-align:center;font-size:.62rem;font-weight:700;color:#080808;">Chat with Nova AI →</div>
+      </div>
+      <div class="screen-desc"><p>Purple gradient Nova AI card with personalized greeting including NovaScore update. 90-Day Plan progress below. 3 AI recommendation cards. "Chat with Nova" gold CTA. Weekly report card.</p></div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">90-Day Money Plan</span><span class="screen-tag">AI PLAN</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;margin-bottom:.3rem;">Your 90-Day Wealth Plan</div>
+        <div style="font-size:.58rem;color:var(--gray1);margin-bottom:.45rem;">Nova AI · Started March 1 · 47 days remaining</div>
+        <div style="background:var(--dkgreen);border:1px solid var(--green);border-radius:6px;padding:.45rem;margin-bottom:.25rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem;"><span style="font-size:.62rem;font-weight:700;color:var(--white);">Month 1 · Foundation</span><span style="font-size:.58rem;color:var(--green);">✓ Complete</span></div>
+          <div class="mock-progress" style="margin:0;"><div class="mock-progress-fill" style="width:100%"></div></div>
+        </div>
+        <div style="background:rgba(0,204,102,.05);border:1.5px solid var(--green);border-radius:6px;padding:.45rem;margin-bottom:.25rem;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:.25rem;"><span style="font-size:.62rem;font-weight:700;color:var(--white);">Month 2 · Growing</span><span style="font-size:.58rem;color:var(--gold);">2/4 done</span></div>
+          <div class="mock-progress"><div class="mock-progress-fill" style="width:50%;background:var(--gold)"></div></div>
+          <div style="font-size:.58rem;color:var(--white);margin-top:.25rem;">○ Start investing KES 2,000/month</div>
+          <div style="font-size:.58rem;color:var(--green);margin-top:.1rem;">✓ Reduce expenses by 10%</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:.4rem;font-size:.58rem;color:var(--gray2);">Month 3 · Build Capital — Unlocks in 17 days 🔒</div>
+      </div>
+      <div class="screen-desc"><p>3-month plan with task cards. Month 1 complete = full green. Month 2 in progress = gold. Month 3 locked until Month 2 complete. Tick tasks with checkmark animation + NovaScore points. Regenerate plan option at bottom.</p></div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">AI Chat — Nova AI</span><span class="screen-tag">24/7 Q&A</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="font-family:'Playfair Display',serif;font-size:.82rem;font-weight:700;margin-bottom:.4rem;">Chat with Nova AI</div>
+        <div style="background:rgba(119,68,204,.1);border-radius:0 8px 8px 8px;border:1px solid rgba(119,68,204,.3);padding:.45rem;margin-bottom:.25rem;max-width:85%;font-size:.6rem;color:var(--gray1);">
+          Should I invest in gold or BTC given my NovaScore profile?
+          <div style="font-size:.48rem;color:var(--purple);margin-top:.15rem;">You · 10:23</div>
+        </div>
+        <div style="background:var(--card);border-radius:8px 0 8px 8px;border:1px solid var(--border);padding:.45rem;margin-bottom:.25rem;margin-left:15%;font-size:.6rem;color:var(--gray1);">
+          Based on your Investment Score of 80 and medium risk profile, I'd suggest 60% Gold / 40% BTC. Here's why...
+          <div style="font-size:.48rem;color:var(--purple);margin-top:.15rem;">Nova AI · 10:23</div>
+        </div>
+        <div style="background:var(--black);border:1px solid var(--border);border-radius:20px;padding:.3rem .55rem;display:flex;align-items:center;gap:.35rem;margin-top:.3rem;"><div style="flex:1;font-size:.58rem;color:var(--gray2);">Ask Nova anything...</div><div style="background:var(--purple);border-radius:50%;width:17px;height:17px;display:flex;align-items:center;justify-content:center;font-size:.5rem;">→</div></div>
+      </div>
+      <div class="screen-desc"><p>Full chat UI. User messages right-aligned (purple tint). AI messages left-aligned (card BG). Nova AI always references user's NovaScore and profile in responses. Suggested questions on first open. Chat history preserved.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ PILLAR 05 — BANKING ════════════ -->
+<div class="section" id="p05">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#001a22,#000d11);">
+    <div class="pillar-num" style="color:var(--teal);">05</div>
+    <div class="pillar-info"><h2>Banking & Payments <span class="v1-badge">V1 CORE</span></h2><p>Multi-currency wallet, M-Pesa, PayPal, virtual card, instant global transfers.</p></div>
+  </div>
+  <div class="screens-grid">
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Wallet Home</span><span class="screen-tag">BALANCE</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="background:linear-gradient(135deg,#001a22,#000d11);border:1px solid var(--teal);border-radius:8px;padding:.65rem;margin-bottom:.4rem;">
+          <div style="font-size:.52rem;color:var(--teal);letter-spacing:1px;">TOTAL BALANCE</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--gold);">$1,240.00</div>
+          <div style="font-size:.58rem;color:var(--gray2);">≈ KES 159,960 · EUR 1,143</div>
+          <div style="display:flex;gap:.3rem;margin-top:.4rem;">
+            <div style="background:rgba(0,119,136,.2);border:1px solid var(--teal);border-radius:20px;padding:.18rem .45rem;font-size:.52rem;color:var(--teal);">+ Add</div>
+            <div style="background:rgba(0,119,136,.2);border:1px solid var(--teal);border-radius:20px;padding:.18rem .45rem;font-size:.52rem;color:var(--teal);">↑ Send</div>
+            <div style="background:rgba(0,119,136,.2);border:1px solid var(--teal);border-radius:20px;padding:.18rem .45rem;font-size:.52rem;color:var(--teal);">↓ Withdraw</div>
+            <div style="background:rgba(0,119,136,.2);border:1px solid var(--teal);border-radius:20px;padding:.18rem .45rem;font-size:.52rem;color:var(--teal);">⇄ FX</div>
+          </div>
+        </div>
+        <div style="font-size:.55rem;color:var(--gray2);margin-bottom:.25rem;letter-spacing:1px;">RECENT</div>
+        <div class="mock-list-item"><div class="mock-avatar" style="background:var(--dkgreen);font-size:.52rem;">M</div><div><div style="font-size:.58rem;font-weight:700;color:var(--white);">M-Pesa Deposit</div><div style="font-size:.48rem;color:var(--gray2);">Today 09:12</div></div><div class="mock-list-val">+$50</div></div>
+        <div class="mock-list-item"><div class="mock-avatar" style="background:#1a0030;font-size:.52rem;">P</div><div><div style="font-size:.58rem;font-weight:700;color:var(--white);">PayPal Transfer</div><div style="font-size:.48rem;color:var(--gray2);">Yesterday</div></div><div class="mock-list-val" style="color:#ff4444;">-$200</div></div>
+      </div>
+      <div class="screen-desc"><p>Teal gradient balance card. Total in USD + local currency equivalents. 4 quick-action pills. Recent transactions with color-coded amounts. Tap transaction for full details.</p></div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Virtual Card</span><span class="screen-tag">CARD</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="background:linear-gradient(135deg,var(--dkgreen),#002233);border-radius:9px;padding:.9rem;margin-bottom:.4rem;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:-12px;right:-12px;width:70px;height:70px;border:1px solid rgba(255,180,0,.12);border-radius:50%;"></div>
+          <div style="font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;color:var(--gold);margin-bottom:.7rem;">NOVA<span style="font-weight:300;color:var(--white)">PESA</span></div>
+          <div style="font-size:.65rem;color:var(--white);letter-spacing:3px;margin-bottom:.45rem;">•••• •••• •••• 4821</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+            <div><div style="font-size:.48rem;color:var(--gray2);">CARD HOLDER</div><div style="font-size:.62rem;color:var(--white);">WIKI</div></div>
+            <div><div style="font-size:.48rem;color:var(--gray2);">EXPIRES</div><div style="font-size:.62rem;color:var(--white);">03/29</div></div>
+            <div style="font-size:.68rem;color:var(--gold);font-weight:700;">VISA</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem;">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:.35rem;text-align:center;font-size:.58rem;color:var(--white);">👁 Show CVV</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:.35rem;text-align:center;font-size:.58rem;color:var(--white);">❄️ Freeze</div>
+        </div>
+      </div>
+      <div class="screen-desc"><p>Card: deep green-teal gradient, gold NOVAPESA logo, masked number. Show CVV requires biometric. Freeze/unfreeze toggle. Spending limit control. Physical card upgrade CTA at bottom.</p></div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-label"><span class="screen-name">Add Money — M-Pesa</span><span class="screen-tag">DEPOSIT</span></div>
+      <div class="screen-mockup" style="background:#080808;">
+        <div style="font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;margin-bottom:.4rem;">Add Money</div>
+        <div style="background:var(--dkgreen);border:1px solid var(--green);border-radius:5px;padding:.38rem .5rem;margin-bottom:.22rem;display:flex;align-items:center;gap:.35rem;">
+          <div style="width:18px;height:18px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:700;color:#080808;flex-shrink:0;">M</div>
+          <div style="flex:1;font-size:.62rem;font-weight:700;color:var(--white);">M-Pesa</div>
+          <div style="font-size:.55rem;color:var(--green);">✓ Selected</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:.38rem .5rem;margin-bottom:.22rem;display:flex;align-items:center;gap:.35rem;">
+          <div style="width:18px;height:18px;background:#003087;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:700;color:white;flex-shrink:0;">P</div>
+          <span style="font-size:.62rem;color:var(--gray1);">PayPal</span>
+        </div>
+        <div style="font-size:.58rem;color:var(--gray2);margin:.4rem 0 .15rem;">Amount (KES)</div>
+        <div style="background:var(--black);border:1.5px solid var(--gold);border-radius:4px;height:22px;margin-bottom:.15rem;display:flex;align-items:center;justify-content:space-between;padding:0 .5rem;"><span style="font-size:.7rem;color:var(--white);">1,000</span><span style="font-size:.52rem;color:var(--gray2);">≈ $7.76</span></div>
+        <div style="background:var(--green);border-radius:4px;padding:.32rem;text-align:center;font-size:.62rem;font-weight:700;color:#080808;margin-top:.3rem;">Continue to M-Pesa →</div>
+      </div>
+      <div class="screen-desc"><p>Payment method list. Selected method highlighted in green. Amount input shows live USD equivalent. Fee displayed clearly. M-Pesa triggers STK push to phone. Confirmation screen after.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ PILLARS 06–16 — CONDENSED SPECS ════════════ -->
+<div class="section" id="p06">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#001a08,#000a04);">
+    <div class="pillar-num" style="color:var(--green2);">06</div>
+    <div class="pillar-info"><h2>Investing & Trading <span class="v1-badge">V1 — SIMPLIFIED</span></h2><p>Portfolio tracker, market charts, demo trading. Live trading moves to V2.</p></div>
+  </div>
+  <div class="note"><strong>V1 scope:</strong> Portfolio Tracker (manual + read-only API sync) · TradingView charts (embedded) · Demo trading ($10K virtual) · Watchlist + price alerts · Demo leaderboard. Live trading, copy trading, and forex execution are V2.</div>
+  <table class="spec-table">
+    <tr><th>Screen</th><th>Status</th><th>Key Design Notes</th></tr>
+    <tr><td>Portfolio Tracker</td><td>V1 ✓</td><td>Manual asset entry + Binance/Coinbase read-only sync. Green portfolio total in Playfair. P&L per asset green/red. Allocation donut chart. Tap asset for detail.</td></tr>
+    <tr><td>Market Charts</td><td>V1 ✓</td><td>TradingView widget embedded. Asset search. Timeframe selector. Watchlist. RED "DEMO" banner when viewing from demo context. Price alert button on each chart.</td></tr>
+    <tr><td>Demo Trading</td><td>V1 ✓</td><td>Full trade UI but RED "DEMO" banner always visible at top. $10,000 virtual balance. Reset balance button. Switch to Live button (disabled with "Coming Soon"). Demo leaderboard tab.</td></tr>
+    <tr><td>Copy Trading</td><td>V2 ⏳</td><td>Greyed out in nav with "Coming Soon" badge. Tapping shows V2 roadmap teaser and email waitlist CTA.</td></tr>
+    <tr><td>Live Forex Trading</td><td>V2 ⏳</td><td>Same as above — V2 teaser with waitlist.</td></tr>
+  </table>
+</div>
+
+<div class="section" id="p07">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#220a00,#110500);">
+    <div class="pillar-num" style="color:var(--orange);">07</div>
+    <div class="pillar-info"><h2>Community & Social</h2><p>Trade feed, leaderboards, live rooms, forums, challenges, referrals.</p></div>
+  </div>
+  <table class="spec-table">
+    <tr><th>Screen</th><th>Key Elements</th><th>Design Notes</th></tr>
+    <tr><td>Community Feed</td><td>Posts, likes, comments, share, topic tags</td><td>Orange accent. Post card: avatar + NovaScore level badge, content, chart image optional. Filter: Following / Trending / For You. "Create Post" gold FAB.</td></tr>
+    <tr><td>Leaderboard</td><td>#1–3 highlighted, return %, weekly/monthly tabs</td><td>Gold border for #1. Silver for #2. Each row shows NovaScore level badge next to username. User's own rank pinned to bottom in gold card.</td></tr>
+    <tr><td>Trader Profile</td><td>Avatar, stats, posts, Copy Trader CTA</td><td>NovaScore level badge prominently displayed. Trading win rate. Follow/Unfollow. Recent posts feed. "Copy Trader" gold CTA (V2 — shows waitlist in V1).</td></tr>
+    <tr><td>Referral Program</td><td>Unique link, QR code, earnings tracker, tiers</td><td>Unique referral link + QR code. Share: WhatsApp, Twitter, copy. Gold earnings counter. Referred users list. Tier badges for top referrers.</td></tr>
+    <tr><td>Group Challenges</td><td>Active challenges, prizes, join, progress</td><td>Challenge cards: name, prize in gold, days remaining, participant count. "Join" green CTA. Progress tracker after joining. Boosts NovaScore on completion.</td></tr>
+  </table>
+</div>
+
+<div class="section" id="p08">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#000d22,#000611);">
+    <div class="pillar-num" style="color:var(--blue);">08</div>
+    <div class="pillar-info"><h2>Business Tools</h2><p>Registration, invoicing, payroll, loans, investor matching, AI pitch deck builder.</p></div>
+  </div>
+  <table class="spec-table">
+    <tr><th>Screen</th><th>Key Elements</th><th>Design Notes</th></tr>
+    <tr><td>Business Dashboard</td><td>Revenue, invoices, credit score, quick actions</td><td>Blue accent #4488ff. Toggle personal/business at top. Monthly revenue in gold Playfair. Invoice stats: sent/paid/overdue colored badges.</td></tr>
+    <tr><td>Invoice Creator</td><td>Client info, line items, tax, total, send</td><td>Clean form. Invoice total auto-calculates in gold. Add logo option. Preview mode. "Send Invoice" green CTA.</td></tr>
+    <tr><td>AI Pitch Deck Builder</td><td>8-question form, AI generates deck, preview, download</td><td>Purple accent (AI feature). 8 simple inputs. Progress bar. Generate button. Preview all slides. Download as PDF or PPTX.</td></tr>
+    <tr><td>Investor Matching</td><td>Startup profile, verified investor cards, match</td><td>Investor cards: focus, check size, portfolio. "Express Interest" sends intro. Chat unlocked on mutual match.</td></tr>
+  </table>
+</div>
+
+<div class="section" id="p09">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#001133,#000819);">
+    <div class="pillar-num" style="color:var(--blue);">09</div>
+    <div class="pillar-info"><h2>Marketplace</h2><p>Buy/sell premium courses, signals, bots, coaching, templates, ebooks.</p></div>
+  </div>
+  <table class="spec-table">
+    <tr><th>Screen</th><th>Key Elements</th><th>Design Notes</th></tr>
+    <tr><td>Marketplace Home</td><td>Category tabs, featured carousel, bestseller grid</td><td>Blue accent. Product cards: seller avatar, rating stars, price in gold. "Bestseller" badge in green. Search + filter.</td></tr>
+    <tr><td>Product Detail</td><td>Preview, description, reviews, buy CTA</td><td>Full-width preview. Gold "Buy Now". "Try Free Preview" outline button. Review stars. Similar products below.</td></tr>
+    <tr><td>Creator Dashboard</td><td>Revenue, products, payout, analytics</td><td>Revenue in gold Playfair. Payout to wallet green button. Product performance per item.</td></tr>
+    <tr><td>Coaching Booking</td><td>Calendar, time slots, payment</td><td>Calendar grid: green available, gray booked. Select date + time. Confirm + payment summary.</td></tr>
+  </table>
+</div>
+
+<div class="section" id="p10">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#1a0000,#0d0000);">
+    <div class="pillar-num" style="color:var(--red);">10</div>
+    <div class="pillar-info"><h2>Jobs & Opportunities</h2><p>Finance job board, freelance, startup funding, grants, accelerators.</p></div>
+  </div>
+  <table class="spec-table">
+    <tr><th>Screen</th><th>Key Elements</th><th>Design Notes</th></tr>
+    <tr><td>Job Board</td><td>Job cards, salary, location, apply</td><td>Red accent. Salary range in gold. "Easy Apply" green button uses NovaPesa profile. Remote / Kenya / Finance filters.</td></tr>
+    <tr><td>Funding Finder</td><td>Grants list, amount, deadline, eligibility</td><td>Deadline in red if under 7 days. Amount in gold. Eligibility as green pill tags. Save + Apply links.</td></tr>
+    <tr><td>Accelerator Directory</td><td>Y Combinator, Techstars, Safaricom Spark cards</td><td>Each card: logo, intake dates, equity %, location. Application link. "Applied" tracker badge.</td></tr>
+  </table>
+</div>
+
+<div class="section" id="p11">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#0a1122,#050911);">
+    <div class="pillar-num" style="color:#334455;">11</div>
+    <div class="pillar-info"><h2>Insurance & Protection</h2><p>Compare, buy and manage life, health, business, travel, device insurance.</p></div>
+  </div>
+  <table class="spec-table">
+    <tr><th>Screen</th><th>Key Elements</th><th>Design Notes</th></tr>
+    <tr><td>Insurance Home</td><td>My policies, add policy, claims tracker</td><td>Slate accent. Policy cards: type icon, insurer, premium/month, expiry. "Active" green badge. Quick buy tiles.</td></tr>
+    <tr><td>Compare & Buy</td><td>Side-by-side comparison table, checkout</td><td>Features as rows, insurers as columns. Green checkmarks, red X. Lowest price highlighted in gold.</td></tr>
+    <tr><td>Claims Management</td><td>File claim, status timeline, upload docs</td><td>Status steps: Submitted → Review → Approved → Paid. Color-coded. Estimated payout date.</td></tr>
+  </table>
+</div>
+
+<div class="section" id="p12">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#1a0c00,#0d0600);">
+    <div class="pillar-num" style="color:#aa7700;">12</div>
+    <div class="pillar-info"><h2>Credit, Lending & Real Estate</h2><p>Loans, P2P lending, credit score, REITs, property, crowdfunding.</p></div>
+  </div>
+  <table class="spec-table">
+    <tr><th>Screen</th><th>Key Elements</th><th>Design Notes</th></tr>
+    <tr><td>Credit Score Hub</td><td>0–850 gauge, factors, improvement tips</td><td>Large circular gauge. Green 700+, gold 500–699, red below 500. Score in Playfair center. Monthly history chart below.</td></tr>
+    <tr><td>Loan Application</td><td>Amount slider, term, monthly payment preview</td><td>Interactive slider. Monthly payment updates live. Total interest shown. Requirements checklist. Submit to partners.</td></tr>
+    <tr><td>Real Estate / REITs</td><td>Property cards, yield, invest from $1</td><td>Property photo cards with location, price, projected yield in green. REIT tiles. Map view toggle.</td></tr>
+  </table>
+</div>
+
+<div class="section" id="p13">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#001a22,#000d11);">
+    <div class="pillar-num" style="color:var(--teal);">13</div>
+    <div class="pillar-info"><h2>News, Intelligence & Compliance</h2><p>AI-curated news, economic calendar, sentiment analysis, KYC, fraud detection.</p></div>
+  </div>
+  <table class="spec-table">
+    <tr><th>Screen</th><th>Key Elements</th><th>Design Notes</th></tr>
+    <tr><td>News Feed</td><td>Article cards, source, relevance tag, bookmark</td><td>Teal accent. "Impact" badge in gold for major news. AI tag showing why article is shown to this user. Filter by asset.</td></tr>
+    <tr><td>Economic Calendar</td><td>Events, flag, impact dots, actual vs forecast</td><td>Red/orange/green impact dots. User timezone auto-applied. Past events show actual vs forecast comparison.</td></tr>
+    <tr><td>Market Sentiment</td><td>Fear & Greed gauge, per-asset sentiment</td><td>Large circular gauge: 0 (extreme fear, red) → 100 (extreme greed, green). Current value in center. Historical chart.</td></tr>
+    <tr><td>Security Settings</td><td>2FA, biometric, devices, activity log</td><td>Green toggles for enabled features. Suspicious activity flagged in red. Device list with remote logout option.</td></tr>
+  </table>
+</div>
+
+<div class="section" id="p14">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#001a22,#000f18);">
+    <div class="pillar-num" style="color:#0088aa;">14</div>
+    <div class="pillar-info"><h2>Kids, Youth & Long-Term Wealth</h2><p>Junior accounts, kids financial games, pension management, estate planning.</p></div>
+  </div>
+  <table class="spec-table">
+    <tr><th>Screen</th><th>Key Elements</th><th>Design Notes</th></tr>
+    <tr><td>Junior Account</td><td>Simplified UI, savings jar, allowance, games</td><td>Colorful but still dark BG. Savings jar fills toward goal. Parent approval overlay for all actions. Kids get their own NovaScore (simplified 0–100 with star levels).</td></tr>
+    <tr><td>Kids Financial Games</td><td>Savings Challenge, Budget City, Investment Quest</td><td>Game interface: mission-based, coin rewards, XP system. Leaderboard with friends. Parent progress report.</td></tr>
+    <tr><td>Retirement Planner</td><td>Age inputs, contribution slider, compound growth chart</td><td>Green compound growth chart. "Retire at 45" toggle. Monthly vs lump sum comparison.</td></tr>
+    <tr><td>Estate Planning</td><td>Asset list, beneficiaries, will generator</td><td>Premium serious feel. Asset values in gold. Beneficiary % assignment. Download will template PDF.</td></tr>
+  </table>
+</div>
+
+<div class="section" id="p15">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#1a0011,#0d0008);">
+    <div class="pillar-num" style="color:#cc2244;">15</div>
+    <div class="pillar-info"><h2>Government Partnerships — B2G</h2><p>National programs, ministry integrations, World Bank, IMF, UNDP partnerships.</p></div>
+  </div>
+  <table class="spec-table">
+    <tr><th>Screen</th><th>Key Elements</th><th>Design Notes</th></tr>
+    <tr><td>Government Portal</td><td>Admin panel, enrolled citizens, completion rates, export</td><td>NOT user-facing. Ministry admin login. Impact dashboard. Data export for UN/World Bank reporting. Ministry branding option.</td></tr>
+    <tr><td>Co-Branded Experience</td><td>Gov logo + NovaPesa logo, official badge</td><td>White-label mode. "Official National Program" badge. Citizens see familiar government branding. Custom color schemes per partner.</td></tr>
+    <tr><td>Impact Dashboard</td><td>Citizens reached, certificates issued, economic impact</td><td>Infographic-style stats. Real-time. Map visualization by region. PDF report export.</td></tr>
+  </table>
+</div>
+
+<div class="section" id="p16">
+  <div class="pillar-hdr" style="background:linear-gradient(135deg,#1a0a30,#0d0520);">
+    <div class="pillar-num" style="color:var(--purple);">16</div>
+    <div class="pillar-info"><h2>Corporate Partnerships — B2B</h2><p>Employee wellness, bulk subscriptions, white-label, API integration, HR tools.</p></div>
+  </div>
+  <table class="spec-table">
+    <tr><th>Screen</th><th>Key Elements</th><th>Design Notes</th></tr>
+    <tr><td>Corporate Admin Portal</td><td>Employee count, usage stats, wellness score, billing</td><td>NOT user-facing. Purple accent. Company logo prominent. Aggregate NovaScore for workforce. Monthly PDF report generation.</td></tr>
+    <tr><td>Employee Onboarding</td><td>CSV bulk invite, team assignment, progress tracking</td><td>Upload CSV or paste emails. Assign to departments. Manager sees completion rates. Automated invite emails.</td></tr>
+    <tr><td>Wellness Score Dashboard</td><td>Company-wide 0–100 score, departments, benchmark</td><td>Company financial wellness score (average of all employee NovaScores). Department breakdown. Industry benchmark comparison.</td></tr>
+    <tr><td>API Integration</td><td>API keys, webhooks, usage stats, sandbox</td><td>Developer panel. Endpoint docs. Sandbox vs production toggle. Rate limits display. Integration health status.</td></tr>
+  </table>
+</div>
+
+<!-- ════════════ SPECS ════════════ -->
+<div class="section" id="spacing">
+  <div class="section-header">
+    <span class="section-num">SPECS · 01</span>
+    <div><div class="section-title">Spacing & Layout System</div></div>
+  </div>
+  <table class="spec-table">
+    <tr><th>Token</th><th>Value</th><th>Usage</th></tr>
+    <tr><td>space-xs</td><td>4px</td><td>Icon-to-text gaps, badge padding</td></tr>
+    <tr><td>space-sm</td><td>8px</td><td>Between related items, icon-label spacing</td></tr>
+    <tr><td>space-md</td><td>16px</td><td>Card internal padding, section gaps</td></tr>
+    <tr><td>space-lg</td><td>24px</td><td>Between cards, major content blocks</td></tr>
+    <tr><td>space-xl</td><td>32px</td><td>Between sections, screen header padding</td></tr>
+    <tr><td>radius-sm</td><td>4px</td><td>Buttons, inputs, small chips</td></tr>
+    <tr><td>radius-md</td><td>8px</td><td>Cards, modals, panels</td></tr>
+    <tr><td>radius-lg</td><td>12px</td><td>Large cards, feature banners</td></tr>
+    <tr><td>radius-pill</td><td>100px</td><td>Filter chips, tags, level badges</td></tr>
+    <tr><td>screen-pad</td><td>16px mobile / 24px web</td><td>All screen left/right margins</td></tr>
+    <tr><td>touch-target</td><td>Minimum 44×44px</td><td>Every tappable element — accessibility</td></tr>
+    <tr><td>NovaScore ring</td><td>96px mobile / 120px web</td><td>Score ring diameter on score screen</td></tr>
+    <tr><td>NovaScore ring hero</td><td>140px+ on score reveal</td><td>Bigger on Money Diagnosis result screen — this is THE moment</td></tr>
+  </table>
+</div>
+
+<div class="section" id="states">
+  <div class="section-header">
+    <span class="section-num">SPECS · 02</span>
+    <div><div class="section-title">UI States — Every Interactive Element</div></div>
+  </div>
+  <table class="spec-table">
+    <tr><th>State</th><th>Trigger</th><th>Visual Treatment</th></tr>
+    <tr><td>Default</td><td>Resting</td><td>Border: #2A2A2A · BG: #1C1C1C · Text: white or #AAAAAA</td></tr>
+    <tr><td>Hover (web)</td><td>Mouse over</td><td>Border: #00AA55 · BG +5% lightness · cursor: pointer · 200ms ease</td></tr>
+    <tr><td>Focus (input)</td><td>Tap / keyboard</td><td>Border: #FFB400 2px · No BG change · outline: none</td></tr>
+    <tr><td>Selected/Active</td><td>Chosen</td><td>BG: rgba(0,204,102,0.1) · Border: #00CC66 · Text: green or gold</td></tr>
+    <tr><td>Loading</td><td>Awaiting data</td><td>Skeleton shimmer (dark gray pulse) OR centered green spinner</td></tr>
+    <tr><td>Success</td><td>Action complete</td><td>Green flash · ✓ checkmark · Toast bottom · auto-dismiss 3s</td></tr>
+    <tr><td>Score Gain</td><td>NovaScore increases</td><td>Gold "+X pts" floating animation rising from action. Special level-up animation on level change.</td></tr>
+    <tr><td>Error</td><td>Action failed</td><td>Red border · Error text below · Toast stays until dismissed</td></tr>
+    <tr><td>Disabled</td><td>Unavailable</td><td>Opacity 0.4 · cursor: not-allowed · No hover effects</td></tr>
+    <tr><td>V2 Feature</td><td>Not yet built</td><td>Gray overlay · "Coming Soon" badge · Email waitlist CTA · Never hide, always tease</td></tr>
+    <tr><td>Empty State</td><td>No content yet</td><td>Centered icon 60px + heading + description + CTA. Friendly, motivating, not alarming.</td></tr>
+  </table>
+</div>
+
+<div class="section" id="arch">
+  <div class="section-header">
+    <span class="section-num">SPECS · 03</span>
+    <div><div class="section-title">Modular Architecture Requirement <span class="v1-badge">MANDATORY</span></div><div class="section-sub">Show this to your technical co-founder. Non-negotiable.</div></div>
+  </div>
+  <div class="warn"><strong>MANDATORY:</strong> NovaPesa MUST use modular architecture where each pillar is developed as an independent module with its own services and database models. This is not optional. It determines whether NovaPesa can scale globally or stays small.</div>
+  <table class="spec-table">
+    <tr><th>Layer</th><th>What It Contains</th><th>Why It Matters</th></tr>
+    <tr><td>Core Services</td><td>Auth · User Profile · NovaScore Engine · Notification Service · Payment Gateway</td><td>Shared across ALL 16 pillars. Built first in Sprint 1. Every module depends on these — they must be rock solid.</td></tr>
+    <tr><td>Pillar Modules</td><td>Each pillar = /modules/pillar-name/ with own routes.js · services.js · models.js · controllers.js</td><td>Independent development. Team member per module. Zero cross-module database access — only via Core Services API.</td></tr>
+    <tr><td>Frontend</td><td>React.js. Each pillar = /src/features/pillar-name/ with own pages, components, hooks, api folders</td><td>Self-contained feature folders. Shared UI components in /src/components. Allows parallel frontend + backend development.</td></tr>
+    <tr><td>NovaScore Engine</td><td>Dedicated service. Receives events from all modules. Recalculates score. Emits score-update events.</td><td>Central brain. Every action on every pillar can affect the score. Must be event-driven, never tightly coupled.</td></tr>
+    <tr><td>Module Communication</td><td>Modules communicate via event bus (Redis pub/sub) or REST calls to Core Services ONLY</td><td>If Trading module goes down, Banking still works. If AI module is slow, community still works. Resilience at scale.</td></tr>
+  </table>
+  <div class="note" style="margin-top:1rem;"><strong>Tell your co-founder:</strong> "Each of our 16 pillars must be its own independent module with its own services and database models. They communicate through a shared API layer only — not directly. If they push back and say this is overkill for V1, that is a red flag."</div>
+</div>
+
+<!-- FOOTER -->
+<div style="background:var(--dkgreen);padding:2.5rem 3rem;text-align:center;border-top:2px solid var(--gold);">
+  <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--gold);margin-bottom:.4rem;">NOVAPESA</div>
+  <div style="font-size:.75rem;color:var(--gray2);margin-bottom:.25rem;">UI/UX Design Guide v2.0 · 16 Pillars · 70+ Screens · The New Era of Wealth</div>
+  <div style="font-size:.7rem;color:var(--gray2);">#GrowBeyond · Pillars 01 & 02: Money Diagnosis + NovaScore (V1 Core) · 2026</div>
+</div>
+
+</main>
+
+<script>
+// Active sidebar nav on scroll
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.nav-item');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
+  navLinks.forEach(l => {
+    l.classList.remove('active');
+    if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+  });
+});
+
+// Animate chart bars to random heights
+document.querySelectorAll('[data-h]').forEach(el => {
+  el.style.height = el.dataset.h;
+});
+</script>
+</body>
+</html>

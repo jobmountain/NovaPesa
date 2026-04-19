@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaPesa — AI Money Coach</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#05050A; --deep:#0A0A12; --void:#0F0F1A; --surface:#141420;
+  --card:#1A1A28; --raised:#202030; --border:#2A2A40; --muted:#38384A;
+  --gold:#C9A84C; --gold2:#E8C97A; --gold3:#F5E4B0; --glow:rgba(201,168,76,.12);
+  --green:#2ECC8A; --green2:#1A9965; --greenglow:rgba(46,204,138,.1);
+  --purple:#8B67CC; --red:#E05555; --white:#F0EEE8; --gray1:#9A98A8; --gray2:#5A5870;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--white);font-family:"DM Sans",sans-serif;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--deep)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+h1,h2,h3,.serif{font-family:"Cormorant Garamond",serif}
+
+/* ── LAYOUT ── */
+.app{display:flex;min-height:100vh}
+.sidebar{width:248px;background:var(--deep);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:300;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.main{margin-left:248px;flex:1;min-height:100vh}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:20px 0 60px rgba(0,0,0,.8)}
+  .main{margin-left:0}
+  .mob{display:flex!important}
+}
+
+/* ── SIDEBAR ── */
+.sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(201,168,76,.06),transparent)}
+.logo-mark{font-family:"Cormorant Garamond",serif;font-size:26px;line-height:1;letter-spacing:2px}
+.logo-n{color:var(--gold);font-weight:700}
+.logo-p{color:var(--white);font-weight:300}
+.logo-tag{font-size:9px;color:var(--gray2);margin-top:5px;letter-spacing:1.5px;text-transform:uppercase}
+.nav-group{padding:14px 0 6px}
+.nav-label{font-size:8px;font-weight:600;letter-spacing:2.5px;color:var(--gray2);text-transform:uppercase;padding:0 24px 8px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 24px;cursor:pointer;font-size:13px;color:var(--gray1);border-left:2px solid transparent;transition:all .2s ease;font-weight:400}
+.nav-item:hover{color:var(--white);background:rgba(255,255,255,.02)}
+.nav-item.active{color:var(--gold);border-left-color:var(--gold);background:var(--glow);font-weight:500}
+.nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:7px;font-weight:600;padding:2px 7px;border-radius:100px;letter-spacing:.5px}
+.badge-g{background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
+.badge-gray{background:var(--raised);color:var(--gray2)}
+.sb-user{margin-top:auto;padding:18px 24px;border-top:1px solid var(--border)}
+.user-pill{display:flex;align-items:center;gap:12px}
+.user-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold2),var(--gold));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--ink);font-family:"Cormorant Garamond",serif;flex-shrink:0;box-shadow:0 0 0 2px rgba(201,168,76,.3)}
+
+/* ── MOBILE TOPBAR ── */
+.mob{display:none;align-items:center;justify-content:space-between;padding:16px 20px;background:var(--deep);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:99}
+.ham{background:none;border:none;color:var(--white);font-size:20px;cursor:pointer;padding:4px}
+
+/* ── SCREENS ── */
+.screen{display:none;padding:36px 32px;max-width:960px;animation:fadeUp .35s ease}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── TYPOGRAPHY ── */
+.eyebrow{font-size:9px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.stitle{font-family:"Cormorant Garamond",serif;font-size:30px;font-weight:700;color:var(--white);margin-bottom:5px;line-height:1.2}
+.ssub{font-size:13px;color:var(--gray1);margin-bottom:32px;font-weight:300}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;transition:border-color .2s}
+.card:hover{border-color:var(--muted)}
+.card-gold{border-top:2px solid rgba(201,168,76,.4);background:linear-gradient(135deg,rgba(201,168,76,.04),var(--card))}
+.card-green{border-top:2px solid rgba(46,204,138,.3);background:linear-gradient(135deg,rgba(46,204,138,.04),var(--card))}
+.card-purple{border-top:2px solid rgba(139,103,204,.3);background:linear-gradient(135deg,rgba(139,103,204,.04),var(--card))}
+.ctitle{font-size:9px;font-weight:600;letter-spacing:2px;color:var(--gray2);text-transform:uppercase;margin-bottom:12px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .2s ease;letter-spacing:.2px}
+.btn-gold{background:linear-gradient(135deg,var(--gold2),var(--gold));color:var(--ink);font-weight:600;box-shadow:0 4px 20px rgba(201,168,76,.2)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(201,168,76,.35)}
+.btn-ghost{background:transparent;color:var(--gray1);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.btn-full{width:100%;justify-content:center}
+.btn-sm{padding:7px 16px;font-size:12px}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr}}
+
+/* ── PROGRESS BAR ── */
+.pt{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.pf{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),var(--gold));transition:width .5s ease}
+
+/* ── TAGS ── */
+.tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:500;letter-spacing:.3px}
+.tg{background:rgba(201,168,76,.12);color:var(--gold);border:1px solid rgba(201,168,76,.25)}
+.tgr{background:rgba(46,204,138,.1);color:var(--green);border:1px solid rgba(46,204,138,.2)}
+.tp{background:rgba(139,103,204,.12);color:var(--purple);border:1px solid rgba(139,103,204,.2)}
+.tr{background:rgba(224,85,85,.1);color:var(--red);border:1px solid rgba(224,85,85,.2)}
+.pill{padding:10px 18px;border-radius:100px;border:1px solid var(--border);font-size:13px;color:var(--gray1);cursor:pointer;transition:all .2s;background:var(--card);font-weight:400}
+.pill:hover{border-color:var(--green);color:var(--white)}
+.pill.sel{border-color:var(--green);color:var(--green);background:var(--greenglow);font-weight:500}
+.pill.selg{border-color:var(--gold);color:var(--gold);background:var(--glow);font-weight:500}
+
+/* ── LANDING ── */
+#landing-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(201,168,76,.08) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(46,204,138,.04) 0%,transparent 50%),var(--ink)}
+.l-logo{font-family:"Cormorant Garamond",serif;font-size:72px;line-height:1;letter-spacing:6px;margin-bottom:8px}
+.l-n{color:var(--gold);font-weight:700}
+.l-p{color:var(--white);font-weight:300}
+.l-div{width:60px;height:1px;background:var(--gold);margin:16px auto;opacity:.5}
+.l-tag{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gray2);margin-bottom:40px}
+.l-hero{font-family:"Cormorant Garamond",serif;font-size:42px;font-weight:600;max-width:580px;line-height:1.25;margin-bottom:16px}
+.l-hero em{color:var(--gold);font-style:normal}
+.l-sub{font-size:15px;color:var(--gray1);max-width:420px;margin:0 auto 40px;line-height:1.8;font-weight:300}
+.trust-chips{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:44px}
+.chip{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:100px;border:1px solid var(--border);background:rgba(255,255,255,.02);font-size:11px;color:var(--gray1)}
+.cdot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.l-cta{background:linear-gradient(135deg,var(--gold2),var(--gold));color:var(--ink);font-weight:700;font-size:15px;padding:16px 44px;border-radius:12px;border:none;cursor:pointer;letter-spacing:.5px;transition:all .25s;box-shadow:0 8px 40px rgba(201,168,76,.3);font-family:"DM Sans",sans-serif}
+.l-cta:hover{transform:translateY(-2px);box-shadow:0 12px 50px rgba(201,168,76,.45)}
+.l-stats{display:flex;gap:48px;margin-top:60px;flex-wrap:wrap;justify-content:center}
+.sn{font-family:"Cormorant Garamond",serif;font-size:32px;font-weight:700;color:var(--gold);line-height:1}
+.sl{font-size:10px;color:var(--gray2);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.ssep{width:1px;background:var(--border);align-self:stretch}
+
+/* ── AUTH MODAL ── */
+.modal-ov{display:none;position:fixed;inset:0;z-index:500;background:rgba(5,5,10,.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
+.modal-ov.show{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px;width:100%;max-width:420px;position:relative;animation:fadeUp .3s ease}
+.mcls{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--gray2);font-size:20px;cursor:pointer;padding:4px 8px}
+.mcls:hover{color:var(--white)}
+.flabel{font-size:11px;font-weight:500;color:var(--gray1);letter-spacing:.5px;margin-bottom:6px;display:block}
+.finput{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--white);font-family:"DM Sans",sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.finput:focus{border-color:var(--gold)}
+.finput::placeholder{color:var(--gray2)}
+.ferr{font-size:11px;color:var(--red);margin-top:6px;display:none}
+.aswitch{font-size:12px;color:var(--gray1);text-align:center;margin-top:16px}
+.aswitch span{color:var(--gold);cursor:pointer;font-weight:500}
+
+/* ── PROCESSING OVERLAY ── */
+.proc-ov{display:none;position:fixed;inset:0;z-index:400;background:var(--ink);align-items:center;justify-content:center;flex-direction:column}
+.proc-ov.show{display:flex}
+.proc-orb{width:100px;height:100px;border-radius:50%;margin:0 auto 28px;background:radial-gradient(circle,rgba(139,103,204,.3),rgba(139,103,204,.05));border:1px solid rgba(139,103,204,.4);display:flex;align-items:center;justify-content:center;font-size:38px;animation:orb 2s ease-in-out infinite}
+@keyframes orb{0%,100%{box-shadow:0 0 0 0 rgba(139,103,204,.3)}50%{box-shadow:0 0 0 20px rgba(139,103,204,0)}}
+
+/* ── REVEAL OVERLAY ── */
+.rev-ov{display:none;position:fixed;inset:0;z-index:350;overflow-y:auto;background:radial-gradient(ellipse 70% 50% at 50% -5%,rgba(201,168,76,.06),transparent),var(--ink);padding:40px 24px}
+.rev-ov.show{display:flex;justify-content:center}
+.ring-w{position:relative;display:inline-block}
+.ring-w svg{transform:rotate(-90deg)}
+.ring-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+/* ── CHAT ── */
+.cshell{border-radius:16px;border:1px solid var(--border);overflow:hidden;background:var(--card)}
+.csugg{display:flex;flex-wrap:wrap;gap:8px;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+.sqb{padding:5px 13px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--gray1);font-size:11px;cursor:pointer;transition:all .2s;font-family:"DM Sans",sans-serif}
+.sqb:hover{border-color:var(--purple);color:var(--white)}
+.cmsgs{height:400px;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+.msg{display:flex;gap:10px}
+.msg.user{flex-direction:row-reverse;align-self:flex-end;max-width:88%;margin-left:auto}
+.msg.ai{max-width:88%}
+.mav{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px}
+.av-ai{background:linear-gradient(135deg,var(--purple),#5522AA)}
+.av-u{background:linear-gradient(135deg,var(--gold2),var(--gold));color:var(--ink);font-weight:700;font-size:12px;font-family:"Cormorant Garamond",serif}
+.mbub{padding:12px 16px;border-radius:16px;font-size:13px;line-height:1.65;font-weight:300}
+.msg.ai .mbub{background:var(--surface);border:1px solid var(--border);color:var(--gray1);border-radius:4px 16px 16px 16px}
+.msg.user .mbub{background:rgba(139,103,204,.2);border:1px solid rgba(139,103,204,.3);color:var(--white);border-radius:16px 4px 16px 16px}
+.cinr{display:flex;gap:10px;padding:16px;border-top:1px solid var(--border);background:var(--surface)}
+.cinp{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--white);font-family:"DM Sans",sans-serif;font-size:13px;resize:none;outline:none;font-weight:300}
+.cinp:focus{border-color:var(--purple)}
+.cinp::placeholder{color:var(--gray2)}
+.tdot{width:6px;height:6px;border-radius:50%;background:var(--purple);display:inline-block;animation:tb 1.2s ease-in-out infinite}
+@keyframes tb{0%,80%,100%{transform:scale(.7);opacity:.5}40%{transform:scale(1.1);opacity:1}}
+
+/* ── COURSES ── */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.cc{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .25s}
+.cc:hover{transform:translateY(-3px);border-color:var(--green);box-shadow:0 12px 40px rgba(46,204,138,.1)}
+.ct{height:90px;display:flex;align-items:center;justify-content:center;font-size:36px}
+.cb{padding:14px}
+
+/* ── PLAN ── */
+.mc{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.mh{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.tr-row{display:flex;align-items:flex-start;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);transition:background .15s}
+.tr-row:last-child{border-bottom:none}
+.tr-row:hover{background:rgba(255,255,255,.02)}
+.tcb{width:20px;height:20px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .2s;margin-top:1px}
+.tcb.done{background:var(--green);border-color:var(--green);color:var(--ink);font-weight:700}
+
+/* ── NET WORTH ── */
+.ar{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.ar:last-child{border-bottom:none}
+.ai-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.aab{width:100%;padding:12px;border:1px dashed var(--border);border-radius:12px;background:transparent;color:var(--gray2);font-size:13px;cursor:pointer;transition:all .2s;margin-top:12px;font-family:"DM Sans",sans-serif}
+.aab:hover{border-color:var(--gold);color:var(--gold);background:var(--glow)}
+
+/* ── SPENDING ── */
+.sc-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.sc-row:last-child{border-bottom:none}
+.ai-tip{background:linear-gradient(135deg,rgba(46,204,138,.08),rgba(46,204,138,.02));border:1px solid rgba(46,204,138,.2);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.atp{font-size:9px;font-weight:600;letter-spacing:1.5px;color:var(--green);text-transform:uppercase;margin-bottom:5px}
+
+/* ── REPORT ── */
+.rh{background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.02));border:1px solid rgba(201,168,76,.2);border-radius:16px;padding:24px;margin-bottom:16px}
+.ra{display:flex;gap:10px;padding:10px 14px;background:var(--surface);border-radius:10px;margin-bottom:8px;border:1px solid var(--border)}
+.ran{width:22px;height:22px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── REFERRAL ── */
+.rlb{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:16px}
+.rs{text-align:center;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.rsn{font-family:"Cormorant Garamond",serif;font-size:36px;font-weight:700;color:var(--gold)}
+
+/* ── FLOAT POINTS ── */
+.fp-el{position:fixed;font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:700;color:var(--gold);pointer-events:none;animation:fup 1.3s ease forwards;z-index:9999}
+@keyframes fup{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-70px)}}
+
+/* ── INSIGHT CARD ── */
+.ins-card{background:linear-gradient(135deg,rgba(139,103,204,.15),rgba(139,103,204,.03));border:1px solid rgba(139,103,204,.25);border-radius:16px;padding:22px;margin-bottom:16px}
+
+/* ── OVERLAY ── */
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200}
+#overlay.show{display:block}
+
+/* ── MOBILE TABS ── */
+#mob-tabs{display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;background:#0A0A12;border-top:1px solid #2A2A40;padding:8px 0 16px}
+</style>
+</head>
+<body>
+
+<div id="overlay" onclick="closeSB()"></div>
+
+<!-- ══════════════════ LANDING ══════════════════ -->
+<div id="landing-wrapper">
+  <div id="landing-page">
+    <div class="l-logo"><span class="l-n">NOVA</span><span class="l-p">PESA</span></div>
+    <div class="l-div"></div>
+    <div class="l-tag">The New Era of Wealth &nbsp;·&nbsp; #GrowBeyond</div>
+    <h1 class="l-hero">Check Your <em>Financial Health</em><br>Free in 2 Minutes</h1>
+    <p class="l-sub">Your personalized NovaScore, a 90-day AI money plan, and a personal AI financial advisor — completely free.</p>
+    <div class="trust-chips">
+      <div class="chip"><div class="cdot"></div>Free forever</div>
+      <div class="chip"><div class="cdot"></div>No sign-up needed</div>
+      <div class="chip"><div class="cdot"></div>AI-powered</div>
+      <div class="chip"><div class="cdot"></div>Under 2 minutes</div>
+    </div>
+    <button class="l-cta" onclick="startCheckup()">Get My Free NovaScore →</button>
+    <div style="margin-top:16px;display:flex;align-items:center;gap:8px;justify-content:center">
+      <span style="font-size:13px;color:var(--gray2);font-weight:300">Already have an account?</span>
+      <button onclick="showLoginFromLanding()" style="background:none;border:none;color:var(--gold);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline;padding:0">Sign In</button>
+    </div>
+    <div class="l-stats">
+      <div><div class="sn">2,847</div><div class="sl">Checkups Done</div></div>
+      <div class="ssep"></div>
+      <div><div class="sn">4.9★</div><div class="sl">User Rating</div></div>
+      <div class="ssep"></div>
+      <div><div class="sn">$0</div><div class="sl">Cost to Start</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ AUTH MODAL ══════════════════ -->
+<div class="modal-ov" id="auth-modal">
+  <div class="modal" style="max-width:460px">
+    <button class="mcls" onclick="closeAuth()">✕</button>
+
+    <!-- REGISTER -->
+    <div id="auth-reg">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;margin-bottom:4px">Create Your Account</div>
+        <div style="font-size:13px;color:var(--gray1);font-weight:300">Save your NovaScore and track your progress</div>
+      </div>
+      <button onclick="googleAuth()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:13px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:16px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 6.293C4.672 4.166 6.656 3.58 9 3.58z"/></svg>
+        Continue with Google
+      </button>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px"><div style="flex:1;height:1px;background:var(--border)"></div><div style="font-size:11px;color:var(--gray2);font-weight:300">or sign up with email</div><div style="flex:1;height:1px;background:var(--border)"></div></div>
+      <div style="margin-bottom:12px"><label class="flabel">Full Name</label><input class="finput" id="rn" type="text" placeholder="e.g. Wiki Mountain" autocomplete="name"></div>
+      <div style="margin-bottom:12px"><label class="flabel">Email Address</label><input class="finput" id="re" type="email" placeholder="you@example.com" autocomplete="email"></div>
+      <div style="margin-bottom:4px"><label class="flabel">Password</label><input class="finput" id="rp" type="password" placeholder="Min 8 characters" autocomplete="new-password"></div>
+      <div class="ferr" id="rerr" style="margin-bottom:8px">Please fill all fields correctly</div>
+      <button onclick="register()" class="btn btn-gold btn-full" style="margin-top:4px">Create Free Account →</button>
+      <div class="aswitch" style="margin-top:14px">Already have an account? <span onclick="showLogin()">Sign in</span></div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="auth-login" style="display:none">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;margin-bottom:4px">Welcome Back</div>
+        <div style="font-size:13px;color:var(--gray1);font-weight:300">Sign in to continue your financial journey</div>
+      </div>
+      <button onclick="googleAuth()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:13px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:16px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 6.293C4.672 4.166 6.656 3.58 9 3.58z"/></svg>
+        Continue with Google
+      </button>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px"><div style="flex:1;height:1px;background:var(--border)"></div><div style="font-size:11px;color:var(--gray2);font-weight:300">or sign in with email</div><div style="flex:1;height:1px;background:var(--border)"></div></div>
+      <div style="margin-bottom:12px"><label class="flabel">Email Address</label><input class="finput" id="le" type="email" placeholder="you@example.com" autocomplete="email"></div>
+      <div style="margin-bottom:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <label class="flabel" style="margin-bottom:0">Password</label>
+          <span onclick="forgotPassword()" style="font-size:11px;color:var(--gold);cursor:pointer;font-weight:400">Forgot password?</span>
+        </div>
+        <input class="finput" id="loginpass" type="password" placeholder="Your password" autocomplete="current-password">
+      </div>
+      <div class="ferr" id="lerr" style="margin-bottom:8px">Invalid email or password</div>
+      <button onclick="login()" class="btn btn-gold btn-full" style="margin-top:4px">Sign In →</button>
+      <div class="aswitch" style="margin-top:14px">New to NovaPesa? <span onclick="showRegister()">Create free account</span></div>
+    </div>
+
+    <!-- LOGGED IN STATE -->
+    <div id="auth-loggedin" style="display:none">
+      <div style="text-align:center;padding:10px 0">
+        <div id="auth-avatar-big" style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold2),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--ink);margin:0 auto 14px;box-shadow:0 0 0 3px rgba(201,168,76,.3)">W</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;margin-bottom:4px" id="auth-loggedin-name">Wiki</div>
+        <div style="font-size:12px;color:var(--gray1);font-weight:300;margin-bottom:4px" id="auth-loggedin-email">user@email.com</div>
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);font-size:11px;color:var(--gold);margin-bottom:20px" id="auth-loggedin-level">Wealth Starter</div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px">
+          <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--gray2);text-transform:uppercase;margin-bottom:12px">Your Progress</div>
+          <div style="display:flex;justify-content:space-around">
+            <div style="text-align:center"><div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--gold)" id="auth-sc">--</div><div style="font-size:10px;color:var(--gray2);margin-top:2px">NovaScore</div></div>
+            <div style="width:1px;background:var(--border)"></div>
+            <div style="text-align:center"><div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--green)" id="auth-co">0</div><div style="font-size:10px;color:var(--gray2);margin-top:2px">Courses</div></div>
+            <div style="width:1px;background:var(--border)"></div>
+            <div style="text-align:center"><div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--purple)" id="auth-tk">0</div><div style="font-size:10px;color:var(--gray2);margin-top:2px">Tasks Done</div></div>
+          </div>
+        </div>
+        <button onclick="logout()" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(224,85,85,.3);background:rgba(224,85,85,.08);color:var(--red);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer">Sign Out</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ PROCESSING OVERLAY ══════════════════ -->
+<div class="proc-ov" id="proc-ov">
+  <div class="proc-orb">🤖</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;margin-bottom:8px;text-align:center">Calculating Your NovaScore</div>
+  <div style="font-size:13px;color:var(--gray1);margin-bottom:28px;text-align:center" id="plbl">Analysing your profile...</div>
+  <div style="width:240px;height:3px;background:var(--border);border-radius:2px;overflow:hidden">
+    <div id="pbar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--purple),var(--gold));border-radius:2px;transition:width .4s ease"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ REVEAL OVERLAY ══════════════════ -->
+<div class="rev-ov" id="rev-ov">
+  <div style="width:100%;max-width:560px">
+    <div style="text-align:center;margin-bottom:28px">
+      <div class="eyebrow" style="text-align:center">Your Results Are Ready</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;margin-bottom:20px">Your NovaScore</div>
+      <div class="ring-w" style="width:180px;height:180px">
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <circle cx="90" cy="90" r="80" fill="none" stroke="var(--border)" stroke-width="8"/>
+          <circle id="rev-ring" cx="90" cy="90" r="80" fill="none" stroke="var(--gold)" stroke-width="8" stroke-linecap="round" stroke-dasharray="503" stroke-dashoffset="503" style="transition:stroke-dashoffset 1.5s ease"/>
+        </svg>
+        <div class="ring-c">
+          <div id="rev-num" style="font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:700;color:var(--gold);line-height:1">0</div>
+          <div style="font-size:11px;color:var(--gray2)">/100</div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-bottom:20px">
+      <div id="rev-badge" style="display:inline-flex;padding:6px 18px;border-radius:100px;font-size:13px;font-weight:500;margin-bottom:12px"></div>
+      <div style="font-size:14px;color:var(--gray1);line-height:1.7;font-weight:300;max-width:400px;margin:0 auto" id="rev-interp"></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="ctitle">Score Breakdown</div>
+      <div id="rev-sub"></div>
+    </div>
+    <div class="card card-gold" style="margin-bottom:14px">
+      <div class="ctitle">📅 Month 1 Preview</div>
+      <div id="rev-plan"></div>
+      <div style="text-align:center;margin-top:14px;padding:14px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:10px">
+        <div style="font-size:11px;color:var(--gray2);margin-bottom:10px">Months 2 &amp; 3 + all features unlock in your dashboard</div>
+        <button class="btn btn-gold btn-full" onclick="enterDash()">Enter My Dashboard →</button>
+      </div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:14px;font-weight:500;margin-bottom:5px">📤 Share Your NovaScore</div>
+      <div style="font-size:12px;color:var(--gray2);margin-bottom:14px;font-weight:300">Challenge your friends — who gets the higher score?</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button style="padding:9px 18px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:#25D366;color:#000;font-family:'DM Sans',sans-serif" onclick="shareWA()">📱 WhatsApp</button>
+        <button style="padding:9px 18px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:#1DA1F2;color:#000;font-family:'DM Sans',sans-serif" onclick="shareX()">🐦 Twitter</button>
+        <button style="padding:9px 18px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;background:var(--raised);color:var(--white);border:1px solid var(--border);font-family:'DM Sans',sans-serif" onclick="copyL()">🔗 Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MAIN APP ══════════════════ -->
+<div id="main-app" style="display:none">
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sb">
+    <div class="sidebar-logo">
+      <div class="logo-mark"><span class="logo-n">NOVA</span><span class="logo-p">PESA</span></div>
+      <div class="logo-tag">AI Money Coach</div>
+    </div>
+    <nav>
+      <div class="nav-group">
+        <div class="nav-label">Overview</div>
+        <div class="nav-item active" onclick="navGo('dashboard')"><span class="nav-icon">◈</span>Dashboard</div>
+        <div class="nav-item" onclick="navGo('score')"><span class="nav-icon">◎</span>My NovaScore</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">AI Features</div>
+        <div class="nav-item" onclick="navGo('plan')"><span class="nav-icon">◷</span>90-Day Plan</div>
+        <div class="nav-item" onclick="navGo('chat')"><span class="nav-icon">◈</span>AI Advisor<span class="nav-badge badge-g">AI</span></div>
+        <div class="nav-item" onclick="navGo('coach')"><span class="nav-icon">◉</span>Spending Coach</div>
+        <div class="nav-item" onclick="navGo('report')"><span class="nav-icon">◫</span>Weekly Report</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Wealth</div>
+        <div class="nav-item" onclick="navGo('networth')"><span class="nav-icon">◈</span>Net Worth</div>
+        <div class="nav-item" onclick="navGo('learning')"><span class="nav-icon">◉</span>Courses</div>
+        <div class="nav-item" onclick="navGo('referral')"><span class="nav-icon">◈</span>Referrals</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Coming Soon</div>
+        <div class="nav-item" style="opacity:.3;cursor:default"><span class="nav-icon">◈</span>Banking<span class="nav-badge badge-gray">V2</span></div>
+        <div class="nav-item" style="opacity:.3;cursor:default"><span class="nav-icon">◈</span>Trading<span class="nav-badge badge-gray">V2</span></div>
+        <div class="nav-item" style="opacity:.3;cursor:default"><span class="nav-icon">◈</span>Community<span class="nav-badge badge-gray">V2</span></div>
+      </div>
+    </nav>
+    <div class="sb-user">
+      <div class="user-pill">
+        <div class="user-av" id="sb-av">W</div>
+        <div><div style="font-size:12px;font-weight:500;color:var(--white)" id="sb-nm">Wiki</div><div style="font-size:10px;color:var(--gold)" id="sb-sc">NovaScore: —</div></div>
+        <button onclick="showAuth()" id="login-btn" style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--gray2);padding:5px 10px;border-radius:8px;font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif">Sign In</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- MOBILE TOPBAR -->
+    <div class="mob">
+      <button class="ham" onclick="openSB()">☰</button>
+      <div class="logo-mark" style="font-size:20px"><span class="logo-n">NOVA</span><span class="logo-p">PESA</span></div>
+      <button id="mob-login-btn" onclick="showAuth()" style="background:none;border:1px solid var(--border);color:var(--gray2);padding:5px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">Sign In</button>
+    </div>
+
+    <!-- MOBILE BOTTOM TAB BAR -->
+    <div id="mob-tabs">
+      <div style="display:flex;justify-content:space-around;align-items:center">
+        <button onclick="navGo('dashboard')" id="tab-dashboard" style="background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;cursor:pointer;min-width:56px">
+          <span style="font-size:20px">🏠</span><span style="font-size:9px;color:var(--gray1);font-family:'DM Sans',sans-serif">Home</span>
+        </button>
+        <button onclick="navGo('score')" id="tab-score" style="background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;cursor:pointer;min-width:56px">
+          <span style="font-size:20px">🎯</span><span style="font-size:9px;color:var(--gray1);font-family:'DM Sans',sans-serif">Score</span>
+        </button>
+        <button onclick="navGo('chat')" id="tab-chat" style="background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 8px;cursor:pointer;min-width:56px">
+          <div style="background:linear-gradient(135deg,var(--gold2),var(--gold));border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-top:-16px;box-shadow:0 4px 16px rgba(201,168,76,.4)">🤖</div>
+          <span style="font-size:9px;color:var(--gray1);font-family:'DM Sans',sans-serif">Nova AI</span>
+        </button>
+        <button onclick="navGo('plan')" id="tab-plan" style="background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;cursor:pointer;min-width:56px">
+          <span style="font-size:20px">📅</span><span style="font-size:9px;color:var(--gray1);font-family:'DM Sans',sans-serif">Plan</span>
+        </button>
+        <button onclick="navGo('learning')" id="tab-learning" style="background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;cursor:pointer;min-width:56px">
+          <span style="font-size:20px">📚</span><span style="font-size:9px;color:var(--gray1);font-family:'DM Sans',sans-serif">Learn</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── DASHBOARD ── -->
+    <div class="screen active" id="screen-dashboard">
+      <div class="eyebrow" id="dash-gr">Good Morning</div>
+      <div class="stitle">Welcome back, <span style="color:var(--gold)" id="dash-nm">there</span></div>
+      <div class="ssub">Your financial command centre.</div>
+      <div class="g2" style="margin-bottom:16px">
+        <div class="card card-gold" style="cursor:pointer" onclick="navGo('score')">
+          <div class="ctitle">NovaScore</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--gold)" id="dash-sc">—</div>
+          <div style="font-size:12px;color:var(--gray1);margin-top:4px;font-weight:300" id="dash-lv">Complete your checkup</div>
+          <div style="margin-top:14px"><div class="pt"><div class="pf" id="dash-sb" style="width:0%"></div></div><div style="font-size:10px;color:var(--gray2);margin-top:5px" id="dash-nx">—</div></div>
+        </div>
+        <div class="card card-green" style="cursor:pointer" onclick="navGo('networth')">
+          <div class="ctitle">Net Worth</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--gold)" id="dash-nw">KES 0</div>
+          <div style="font-size:12px;color:var(--gray1);margin-top:4px;font-weight:300">↑ <span style="color:var(--green)">Track your assets</span></div>
+          <div style="margin-top:12px;font-size:12px;color:var(--gray2);font-weight:300">Add assets to see growth →</div>
+        </div>
+      </div>
+      <div class="ins-card">
+        <div style="font-size:9px;font-weight:600;letter-spacing:2px;color:var(--purple);text-transform:uppercase;margin-bottom:10px">🤖 Nova AI — Daily Insight</div>
+        <div style="font-size:14px;color:var(--white);line-height:1.7;font-weight:300" id="dash-ins">Complete your financial checkup to unlock personalized AI insights.</div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:12px;border-color:rgba(139,103,204,.3);color:var(--purple)" onclick="navGo('chat')">Ask Nova AI →</button>
+      </div>
+      <div class="g2" style="margin-top:16px">
+        <div class="card"><div class="ctitle">📅 90-Day Plan</div><div id="dash-plan" style="font-size:13px;color:var(--gray1);line-height:1.7;font-weight:300">AI plan generates after your checkup.</div><button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="navGo('plan')">View Plan →</button></div>
+        <div class="card"><div class="ctitle">📚 Learning</div><div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--green)" id="dash-co">0<span style="font-size:18px;color:var(--gray2)"> / 10</span></div><div style="font-size:12px;color:var(--gray1);margin-top:4px;font-weight:300">Courses started</div><div style="font-size:11px;color:var(--gold);margin-top:8px">Every course boosts your score →</div></div>
+      </div>
+    </div>
+
+    <!-- ── CHECKUP ── -->
+    <div class="screen" id="screen-checkup"><div id="qbody"></div></div>
+
+    <!-- ── SCORE ── -->
+    <div class="screen" id="screen-score">
+      <div class="eyebrow">Financial Health</div>
+      <div class="stitle">My NovaScore</div>
+      <div class="ssub">Updates in real-time as you take action.</div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <div class="card card-gold" style="flex-shrink:0;min-width:240px;text-align:center;padding:28px">
+          <div style="display:flex;justify-content:center;margin-bottom:16px">
+            <div class="ring-w" style="width:160px;height:160px">
+              <svg width="160" height="160" viewBox="0 0 160 160">
+                <circle cx="80" cy="80" r="70" fill="none" stroke="var(--border)" stroke-width="8"/>
+                <circle id="sc-ring" cx="80" cy="80" r="70" fill="none" stroke="var(--gold)" stroke-width="8" stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="440" style="transition:stroke-dashoffset 1.5s ease"/>
+              </svg>
+              <div class="ring-c"><div id="sc-big" style="font-family:'Cormorant Garamond',serif;font-size:50px;font-weight:700;color:var(--gold);line-height:1">—</div><div style="font-size:11px;color:var(--gray2)">/100</div></div>
+            </div>
+          </div>
+          <div id="sc-badge" style="display:inline-flex;padding:5px 14px;border-radius:100px;font-size:12px;font-weight:500;margin-bottom:12px">—</div>
+          <div style="font-size:13px;color:var(--gray1);line-height:1.6;font-weight:300" id="sc-interp"></div>
+        </div>
+        <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:14px">
+          <div class="card"><div class="ctitle">Score Breakdown</div><div id="sc-subs"></div></div>
+          <div class="card card-green"><div class="ctitle">🚀 Improve My Score</div><div id="sc-impr"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 90-DAY PLAN ── -->
+    <div class="screen" id="screen-plan">
+      <div class="eyebrow">AI Financial Planning</div>
+      <div class="stitle">Your 90-Day Money Plan</div>
+      <div class="ssub" id="plan-sub">Personalized by Nova AI.</div>
+      <div id="plan-body"></div>
+    </div>
+
+    <!-- ── AI CHAT ── -->
+    <div class="screen" id="screen-chat">
+      <div class="eyebrow">AI Financial Advisor</div>
+      <div class="stitle">Nova AI Advisor</div>
+      <div class="ssub">Ask anything. Nova knows your complete financial profile.</div>
+      <div class="cshell">
+        <div class="csugg" id="csugg"></div>
+        <div class="cmsgs" id="cmsgs"></div>
+        <div class="cinr">
+          <textarea class="cinp" id="cinp" rows="1" placeholder="Ask Nova anything about your finances..." onkeydown="ck(event)"></textarea>
+          <button class="btn btn-gold" id="sbtn" onclick="sendMsg()">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SPENDING COACH ── -->
+    <div class="screen" id="screen-coach">
+      <div class="eyebrow">AI Spending Intelligence</div>
+      <div class="stitle">Spending Coach</div>
+      <div class="ssub">Nova AI analyses your spending and shows exactly where to cut.</div>
+      <div class="g2" style="margin-bottom:20px">
+        <div class="card card-gold"><div class="ctitle">This Month</div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--gold)">KES 42,800</div><div style="font-size:12px;color:var(--red);margin-top:4px">↑ 12% vs last month</div></div>
+        <div class="card card-green"><div class="ctitle">Potential Savings</div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--green)">KES 8,400</div><div style="font-size:12px;color:var(--gray1);margin-top:4px">3 opportunities identified</div></div>
+      </div>
+      <div class="ai-tip"><div class="atp">🤖 Nova AI Tip #1</div><div style="font-size:13px;color:var(--gray1);line-height:1.6;font-weight:300">You're spending <strong style="color:var(--white)">KES 12,000/month on food</strong> — 28% of income. Average for your bracket is 18%. Meal prepping 3 days a week could save KES 3,600/month.</div></div>
+      <div class="ai-tip"><div class="atp">🤖 Nova AI Tip #2</div><div style="font-size:13px;color:var(--gray1);line-height:1.6;font-weight:300">Entertainment spending jumped <strong style="color:var(--white)">40% this month</strong> to KES 8,200. A monthly budget of KES 5,000 redirects KES 3,200 straight to your emergency fund.</div></div>
+      <div class="ai-tip"><div class="atp">🤖 Nova AI Tip #3</div><div style="font-size:13px;color:var(--gray1);line-height:1.6;font-weight:300">You have <strong style="color:var(--white)">3 subscriptions totalling KES 2,400/month</strong>. Cancelling unused streaming services saves KES 1,600/month immediately.</div></div>
+      <div class="card" style="margin-top:20px"><div class="ctitle">Spending by Category</div><div id="spend-cats"></div></div>
+    </div>
+
+    <!-- ── NET WORTH ── -->
+    <div class="screen" id="screen-networth">
+      <div class="eyebrow">Wealth Tracking</div>
+      <div class="stitle">Net Worth Tracker</div>
+      <div class="ssub">Add assets and liabilities to track your real wealth over time.</div>
+      <div class="card card-gold" style="text-align:center;padding:28px;margin-bottom:20px">
+        <div style="font-size:10px;font-weight:600;letter-spacing:2px;color:var(--gold);margin-bottom:8px">TOTAL NET WORTH</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:700;color:var(--gold);line-height:1" id="nw-total">KES 0</div>
+        <div style="font-size:12px;color:var(--gray2);margin-top:6px;font-weight:300">Assets minus Liabilities</div>
+      </div>
+      <div class="g2">
+        <div class="card"><div class="ctitle" style="color:var(--green)">Assets</div><div id="assets-list"></div><button class="aab" onclick="addItem('asset')">+ Add Asset</button></div>
+        <div class="card"><div class="ctitle" style="color:var(--red)">Liabilities</div><div id="liab-list"></div><button class="aab" onclick="addItem('liability')">+ Add Liability</button></div>
+      </div>
+    </div>
+
+    <!-- ── WEEKLY REPORT ── -->
+    <div class="screen" id="screen-report">
+      <div class="eyebrow">AI Financial Report</div>
+      <div class="stitle">Weekly Report</div>
+      <div class="ssub">Your financial summary — delivered every Sunday by Nova AI.</div>
+      <div class="rh">
+        <div style="font-size:10px;font-weight:600;letter-spacing:2px;color:var(--gold);margin-bottom:8px">WEEK OF MARCH 10–16, 2026</div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:700;color:var(--gold);line-height:1" id="rep-sc">—</div>
+          <div style="font-size:14px;color:var(--green);font-weight:500">↑ +4 pts this week</div>
+        </div>
+        <div style="font-size:12px;color:var(--gray1);font-weight:300">You improved <strong style="color:var(--gold)">4 points</strong> this week. Your Savings Score improved most — great consistency!</div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--gray2);text-transform:uppercase;margin-bottom:10px">This Week's Wins</div>
+        <div class="ra"><div class="ran">1</div><div style="font-size:13px;color:var(--gray1);line-height:1.5;font-weight:300">Completed "Personal Finance Basics" — earned +8 NovaScore points. Knowledge Score jumped from 45 to 53.</div></div>
+        <div class="ra"><div class="ran">2</div><div style="font-size:13px;color:var(--gray1);line-height:1.5;font-weight:300">Ticked 3 tasks on your 90-Day Plan. Month 1 is now 60% complete — you are on track!</div></div>
+        <div class="ra"><div class="ran">3</div><div style="font-size:13px;color:var(--gray1);line-height:1.5;font-weight:300">Referred 1 friend who completed their checkup. Earned +3 NovaScore points.</div></div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--gray2);text-transform:uppercase;margin-bottom:10px">Next Week — Nova AI Recommends</div>
+        <div class="ra"><div class="ran" style="background:var(--purple)">1</div><div style="font-size:13px;color:var(--gray1);line-height:1.5;font-weight:300">Start "Saving &amp; Budgeting Mastery" — 6 lessons, directly targets your weakest sub-score.</div></div>
+        <div class="ra"><div class="ran" style="background:var(--purple)">2</div><div style="font-size:13px;color:var(--gray1);line-height:1.5;font-weight:300">Complete 2 more Month 1 plan tasks. You need 4 more to unlock Month 2.</div></div>
+        <div class="ra"><div class="ran" style="background:var(--purple)">3</div><div style="font-size:13px;color:var(--gray1);line-height:1.5;font-weight:300">Add your savings account to Net Worth Tracker — seeing your number grow is the biggest motivation boost.</div></div>
+      </div>
+      <div class="g2">
+        <div class="card"><div class="ctitle">Sub-Score Changes</div><div id="rep-subs"></div></div>
+        <div class="card"><div class="ctitle">Level Progress</div><div id="rep-lvl"></div></div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-gold" onclick="shareWA()">📤 Share on WhatsApp</button>
+        <button class="btn btn-ghost" onclick="navGo('chat')">Ask Nova AI →</button>
+      </div>
+    </div>
+
+    <!-- ── LEARNING ── -->
+    <div class="screen" id="screen-learning">
+      <div class="eyebrow">Knowledge &amp; Growth</div>
+      <div class="stitle">Learning &amp; Education</div>
+      <div class="ssub">Complete courses to boost your NovaScore. Every course = +3–15 points.</div>
+      <div id="cat-pills" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px"></div>
+      <div class="cg" id="course-grid"></div>
+    </div>
+
+    <!-- ── REFERRAL ── -->
+    <div class="screen" id="screen-referral">
+      <div class="eyebrow">Grow Together</div>
+      <div class="stitle">Referral Program</div>
+      <div class="ssub">Share NovaPesa. Earn NovaScore points for every friend who joins.</div>
+      <div class="rlb">
+        <div style="font-size:13px;color:var(--green);flex:1;word-break:break-all" id="ref-lnk">novapesa.com/ref/user2026</div>
+        <button class="btn btn-ghost btn-sm" onclick="copyRef()">Copy</button>
+      </div>
+      <div class="g3" style="margin-bottom:24px">
+        <div class="rs"><div class="rsn" id="ref-ct">0</div><div style="font-size:11px;color:var(--gray2);margin-top:4px;font-weight:300;letter-spacing:.5px">Friends Referred</div></div>
+        <div class="rs"><div class="rsn" id="ref-pt">0</div><div style="font-size:11px;color:var(--gray2);margin-top:4px;font-weight:300;letter-spacing:.5px">Points Earned</div></div>
+        <div class="rs"><div class="rsn">+3</div><div style="font-size:11px;color:var(--gray2);margin-top:4px;font-weight:300;letter-spacing:.5px">Pts Per Referral</div></div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="ctitle">Share Your Score</div>
+        <div style="font-size:13px;color:var(--gray1);margin-bottom:16px;font-weight:300">The fastest way to get referrals is sharing your score. People are competitive — they want to beat your number.</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button style="padding:9px 18px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:#25D366;color:#000;font-family:'DM Sans',sans-serif" onclick="shareWA()">📱 WhatsApp</button>
+          <button style="padding:9px 18px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:#1DA1F2;color:#000;font-family:'DM Sans',sans-serif" onclick="shareX()">🐦 Twitter</button>
+          <button style="padding:9px 18px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;background:var(--raised);color:var(--white);border:1px solid var(--border);font-family:'DM Sans',sans-serif" onclick="copyL()">🔗 Copy Link</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end main content -->
+</div><!-- end app -->
+</div><!-- end main-app -->
+
+<!-- ══════════════════ JAVASCRIPT ══════════════════ -->
+<script>
+// ── STATE ──────────────────────────────────────────────
+const S = {
+  score: 0, level: null, sub: {}, plan: null, tasks: {},
+  courses: [], chat: [], name: 'there', insight: '',
+  assets: [], liab: [], refs: 0, userEmail: null, profile: {}
+}
+
+// ── CONSTANTS ──────────────────────────────────────────
+const LVL = [
+  {min:0,  max:30, label:'Beginner',      color:'#E07755', bg:'rgba(224,119,85,.15)'},
+  {min:31, max:50, label:'Builder',       color:'#C9A84C', bg:'rgba(201,168,76,.15)'},
+  {min:51, max:70, label:'Wealth Starter',color:'#2ECC8A', bg:'rgba(46,204,138,.15)'},
+  {min:71, max:85, label:'Wealth Builder',color:'#6699FF', bg:'rgba(102,153,255,.15)'},
+  {min:86, max:100,label:'Elite Investor',color:'#B088EE', bg:'rgba(176,136,238,.15)'}
+]
+
+const QS = [
+  {id:'income',    t:'What is your monthly income?',        h:'Pick the closest range',                         type:'single', o:['Under KES 10,000','KES 10,000–30,000','KES 30,000–70,000','KES 70,000–150,000','Over KES 150,000']},
+  {id:'expenses',  t:'How much do you spend monthly?',      h:'Include rent, food, transport, bills',            type:'single', o:['Less than 50% of income','50–70% of income','70–90% of income','Almost all of it','More than I earn']},
+  {id:'savings',   t:'How much do you have in savings?',    h:'Cash, mobile money, bank combined',               type:'single', o:['Nothing yet','Under KES 5,000','KES 5,000–20,000','KES 20,000–100,000','Over KES 100,000']},
+  {id:'debt',      t:'Do you have any loans or debt?',      h:'Include mobile loans, bank loans, credit cards',  type:'single', o:['No debt at all','Small personal loan','Credit card debt','Multiple loans','Significant debt burden']},
+  {id:'investing', t:'Are you currently investing?',        h:'Stocks, crypto, money market funds',             type:'single', o:['Not at all','Occasionally','Consistently monthly','Across multiple assets','I trade actively']},
+  {id:'goals',     t:'What are your financial goals?',      h:'Select all that apply',                           type:'multi',  o:['Build emergency fund','Clear all debt','Start investing','Grow my income','Buy property','Start a business','Save for retirement','Financial freedom']},
+  {id:'knowledge', t:'Rate your financial knowledge',       h:'Be honest — this personalizes your learning path',type:'single', o:['Complete beginner','Know the basics','Understand most concepts','Quite knowledgeable','Expert level']},
+  {id:'challenge', t:'Your biggest financial challenge?',   h:'The one thing you most want to fix',              type:'single', o:['Spend more than I earn','Cannot save consistently','Do not know how to invest','Have too much debt','Want to grow my income','Lack financial knowledge']},
+]
+
+const STEPS = [
+  'Calculating savings score...','Analysing spending patterns...','Evaluating investment profile...',
+  'Measuring income growth...','Assessing financial knowledge...','Generating 90-Day Plan...','Preparing AI insights...'
+]
+
+const COURSES = [
+  {id:1, e:'📊', t:'Personal Finance Basics',     cat:'Finance',   l:8,  lv:'Beginner',    pts:8,  bg:'linear-gradient(135deg,#004422,#002211)'},
+  {id:2, e:'💱', t:'Forex Trading Fundamentals',  cat:'Forex',     l:12, lv:'Beginner',    pts:10, bg:'linear-gradient(135deg,#1a0a00,#100500)'},
+  {id:3, e:'₿',  t:'Cryptocurrency Basics',       cat:'Crypto',    l:10, lv:'Beginner',    pts:8,  bg:'linear-gradient(135deg,#001a0a,#000f05)'},
+  {id:4, e:'📈', t:'Stock Market Investing',       cat:'Investing', l:15, lv:'Intermediate',pts:12, bg:'linear-gradient(135deg,#001a1a,#000f0f)'},
+  {id:5, e:'💰', t:'Saving & Budgeting Mastery',  cat:'Finance',   l:6,  lv:'Beginner',    pts:6,  bg:'linear-gradient(135deg,#1a1000,#0f0800)'},
+  {id:6, e:'🏦', t:'Money Market Funds Kenya',    cat:'Investing', l:5,  lv:'Beginner',    pts:6,  bg:'linear-gradient(135deg,#00001a,#00000f)'},
+  {id:7, e:'🚀', t:'Advanced Forex Strategies',   cat:'Forex',     l:20, lv:'Advanced',    pts:15, bg:'linear-gradient(135deg,#1a000a,#0f0005)'},
+  {id:8, e:'🏢', t:'Business Finance Essentials', cat:'Business',  l:10, lv:'Intermediate',pts:10, bg:'linear-gradient(135deg,#0a001a,#05000f)'},
+  {id:9, e:'🛡️', t:'Debt Freedom Blueprint',     cat:'Finance',   l:7,  lv:'Beginner',    pts:7,  bg:'linear-gradient(135deg,#001a00,#000f00)'},
+  {id:10,e:'📉', t:'Risk Management in Trading',  cat:'Investing', l:8,  lv:'Intermediate',pts:8,  bg:'linear-gradient(135deg,#1a0000,#0f0000)'},
+]
+
+const CATS = ['All','Finance','Forex','Crypto','Investing','Business']
+const SPEND = [
+  {e:'🏠',n:'Rent & Housing',  a:15000,p:35,c:'#C9A84C'},
+  {e:'🍽️',n:'Food & Dining',  a:12000,p:28,c:'#E05555'},
+  {e:'🚗',n:'Transport',       a:6000, p:14,c:'#2ECC8A'},
+  {e:'📱',n:'Subscriptions',   a:2400, p:6, c:'#8B67CC'},
+  {e:'🎮',n:'Entertainment',   a:8200, p:19,c:'#2AAABB'}
+]
+
+let curQ = 0, answers = {}, activeCat = 'All'
+
+// ── NAVIGATION ──────────────────────────────────────────
+function navGo(s) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'))
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.remove('active')
+    const oc = el.getAttribute('onclick') || ''
+    if (oc.indexOf("'" + s + "'") > -1) el.classList.add('active')
+  })
+  const scr = document.getElementById('screen-' + s)
+  if (scr) scr.classList.add('active')
+  closeSB()
+  const fns = {dashboard:rdDash, score:rdScore, plan:rdPlan, learning:rdLearn, coach:rdCoach, networth:rdNW, report:rdReport, referral:rdRef}
+  if (fns[s]) fns[s]()
+  if (s === 'chat') { if (!S.chat || !S.chat.length) initChat(); rdChat() }
+  // Mobile tab highlights
+  ;['dashboard','score','chat','plan','learning'].forEach(t => {
+    const tb = document.getElementById('tab-' + t)
+    if (tb) tb.querySelectorAll('span').forEach(sp => { sp.style.color = t === s ? 'var(--gold)' : 'var(--gray1)' })
+  })
+}
+
+function openSB() { document.getElementById('sb').classList.add('open'); document.getElementById('overlay').classList.add('show') }
+function closeSB() { document.getElementById('sb').classList.remove('open'); document.getElementById('overlay').classList.remove('show') }
+
+// ── AUTH ────────────────────────────────────────────────
+function showLoginFromLanding() {
+  if (document.getElementById('main-app').style.display === 'none') {
+    document.getElementById('landing-wrapper').style.display = 'none'
+    document.getElementById('main-app').style.display = 'block'
+    showMobTabs()
+    navGo('dashboard')
+  }
+  showLogin()
+  document.getElementById('auth-modal').classList.add('show')
+}
+function showAuth() { document.getElementById('auth-modal').classList.add('show'); showRegister() }
+function closeAuth() { document.getElementById('auth-modal').classList.remove('show') }
+function showLogin() { document.getElementById('auth-reg').style.display='none'; document.getElementById('auth-login').style.display='block'; document.getElementById('auth-loggedin').style.display='none' }
+function showRegister() { document.getElementById('auth-reg').style.display='block'; document.getElementById('auth-login').style.display='none'; document.getElementById('auth-loggedin').style.display='none' }
+
+function register() {
+  const n = document.getElementById('rn').value.trim()
+  const e = document.getElementById('re').value.trim()
+  const p = document.getElementById('rp').value.trim()
+  const err = document.getElementById('rerr')
+  if (!n || !e || !p || p.length < 8) {
+    err.style.display = 'block'
+    err.textContent = !n ? 'Please enter your name' : !e ? 'Please enter your email' : p.length < 8 ? 'Password must be at least 8 characters' : 'Please fill all fields'
+    return
+  }
+  const users = JSON.parse(localStorage.getItem('np_users') || '{}')
+  if (users[e]) { err.style.display = 'block'; err.textContent = 'Email already registered. Please sign in.'; return }
+  users[e] = {name:n, email:e, password:p, created:Date.now()}
+  localStorage.setItem('np_users', JSON.stringify(users))
+  S.name = n; S.userEmail = e
+  saveProgress(e); closeAuth(); updateSB(); updateLoginBtn()
+  fp('Account created! Welcome ' + n.split(' ')[0] + ' 🎉')
+}
+
+function login() {
+  const e = document.getElementById('le').value.trim()
+  const p = document.getElementById('loginpass').value.trim()
+  const err = document.getElementById('lerr')
+  if (!e || !p) { err.style.display = 'block'; return }
+  const users = JSON.parse(localStorage.getItem('np_users') || '{}')
+  if (!users[e] || users[e].password !== p) { err.style.display = 'block'; err.textContent = 'Invalid email or password'; return }
+  S.name = users[e].name; S.userEmail = e
+  loadProgress(e); closeAuth(); updateSB(); updateLoginBtn()
+  fp('Welcome back, ' + users[e].name.split(' ')[0] + '! 🔥')
+  navGo('dashboard')
+}
+
+function googleAuth() {
+  const email = prompt('Google Sign-In (Demo)\nEnter your Gmail address:')
+  if (!email || !email.includes('@')) return
+  const name = email.split('@')[0].replace(/^\w/, c => c.toUpperCase())
+  const users = JSON.parse(localStorage.getItem('np_users') || '{}')
+  if (!users[email]) { users[email] = {name, email, password:'google_auth', provider:'google', created:Date.now()}; localStorage.setItem('np_users', JSON.stringify(users)); fp('Google account connected! Welcome ' + name + ' 🎉') }
+  else { fp('Welcome back, ' + name + '! 🔥') }
+  S.name = name; S.userEmail = email
+  loadProgress(email); closeAuth(); updateSB(); updateLoginBtn(); navGo('dashboard')
+}
+
+function forgotPassword() {
+  const e = prompt('Enter your email to reset password:')
+  if (!e) return
+  const users = JSON.parse(localStorage.getItem('np_users') || '{}')
+  if (users[e]) alert('In the live app a reset email is sent to ' + e + '.\n\nDemo password: ' + users[e].password)
+  else alert('No account found with that email.')
+}
+
+function logout() {
+  if (S.userEmail) saveProgress(S.userEmail)
+  S.userEmail = null; closeAuth(); updateLoginBtn()
+  fp('Signed out. See you soon! 👋')
+}
+
+function showProfile() {
+  document.getElementById('auth-modal').classList.add('show')
+  document.getElementById('auth-reg').style.display = 'none'
+  document.getElementById('auth-login').style.display = 'none'
+  document.getElementById('auth-loggedin').style.display = 'block'
+  document.getElementById('auth-avatar-big').textContent = S.name.charAt(0).toUpperCase()
+  document.getElementById('auth-loggedin-name').textContent = S.name
+  document.getElementById('auth-loggedin-email').textContent = S.userEmail || ''
+  document.getElementById('auth-loggedin-level').textContent = S.level ? S.level.label : 'No score yet'
+  document.getElementById('auth-sc').textContent = S.score || '--'
+  document.getElementById('auth-co').textContent = S.courses.length
+  document.getElementById('auth-tk').textContent = Object.values(S.tasks).filter(v => v).length
+}
+
+function saveProgress(email) {
+  localStorage.setItem('np_progress_' + email, JSON.stringify({
+    score:S.score, level:S.level, sub:S.sub, profile:S.profile, plan:S.plan,
+    tasks:S.tasks, courses:S.courses, assets:S.assets, liab:S.liab,
+    refs:S.refs, insight:S.insight, name:S.name, savedAt:Date.now()
+  }))
+}
+
+function loadProgress(email) {
+  const saved = localStorage.getItem('np_progress_' + email)
+  if (!saved) return
+  try {
+    const p = JSON.parse(saved)
+    Object.assign(S, {score:p.score||0, level:p.level||null, sub:p.sub||{}, profile:p.profile||{}, plan:p.plan||null, tasks:p.tasks||{}, courses:p.courses||[], assets:p.assets||[], liab:p.liab||[], refs:p.refs||0, insight:p.insight||''})
+    if (p.name) S.name = p.name
+    if (S.score > 0) showMobTabs()
+    fp('Progress restored ✅')
+  } catch(ex) { console.log('Load error', ex) }
+}
+
+function updateLoginBtn() {
+  ;['login-btn','mob-login-btn'].forEach(id => {
+    const btn = document.getElementById(id)
+    if (!btn) return
+    if (S.userEmail) { btn.textContent = S.name.split(' ')[0]; btn.style.color = 'var(--gold)'; btn.style.borderColor = 'rgba(201,168,76,.3)'; btn.setAttribute('onclick','showProfile()') }
+    else { btn.textContent = 'Sign In'; btn.style.color = 'var(--gray2)'; btn.style.borderColor = 'var(--border)'; btn.setAttribute('onclick','showAuth()') }
+  })
+}
+
+setInterval(() => { if (S.userEmail && S.score > 0) saveProgress(S.userEmail) }, 30000)
+
+// ── CHECKUP ─────────────────────────────────────────────
+function startCheckup() {
+  document.getElementById('landing-wrapper').style.display = 'none'
+  document.getElementById('main-app').style.display = 'block'
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
+  document.getElementById('screen-checkup').classList.add('active')
+  curQ = 0; answers = {}; rdQ()
+}
+
+function rdQ() {
+  if (curQ >= QS.length) { showProc(); return }
+  const q = QS[curQ]
+  const isMulti = q.type === 'multi'
+  const pct = Math.round(curQ / QS.length * 100)
+  if (answers[q.id] === undefined) answers[q.id] = isMulti ? [] : null
+  const sel = answers[q.id]
+  const ph = q.o.map((o, i) => {
+    const isSel = isMulti ? (sel || []).includes(i) : sel === i
+    const cls = isSel ? (isMulti ? 'selg' : 'sel') : ''
+    return '<div class="pill ' + cls + '" onclick="selO(' + i + ',' + (isMulti?1:0) + ')">' + o + '</div>'
+  }).join('')
+  const canNext = isMulti ? (sel || []).length > 0 : (sel !== null && sel !== undefined)
+  document.getElementById('qbody').innerHTML =
+    '<div class="eyebrow">Financial Checkup</div>' +
+    '<div class="stitle">Know Your Numbers</div>' +
+    '<div class="ssub">Quick honest answers — under 2 minutes.</div>' +
+    '<div class="pt" style="margin-bottom:28px"><div class="pf" style="width:' + pct + '%"></div></div>' +
+    '<div style="font-size:10px;font-weight:600;letter-spacing:2px;color:var(--green);margin-bottom:6px;text-transform:uppercase">QUESTION ' + (curQ+1) + ' OF ' + QS.length + '</div>' +
+    '<div style="font-family:Cormorant Garamond,serif;font-size:24px;font-weight:600;line-height:1.35;margin-bottom:6px">' + q.t + '</div>' +
+    '<div style="font-size:12px;color:var(--gray2);margin-bottom:20px;font-weight:300">' + q.h + '</div>' +
+    (isMulti ? '<div style="font-size:10px;font-weight:600;letter-spacing:1px;color:var(--gold);margin-bottom:14px;text-transform:uppercase">Select all that apply</div>' : '') +
+    '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px">' + ph + '</div>' +
+    '<div style="display:flex;gap:12px">' +
+    (curQ > 0 ? '<button class="btn btn-ghost" onclick="prevQ()">← Back</button>' : '') +
+    (isMulti ? '<button class="btn btn-gold" onclick="nextQ()" ' + (canNext ? '' : 'disabled') + '>' + (curQ === QS.length-1 ? 'Get My NovaScore →' : 'Next →') + '</button>' : '') +
+    '</div>'
+}
+
+function selO(idx, isMulti) {
+  const q = QS[curQ]
+  if (isMulti === 1) {
+    if (!Array.isArray(answers[q.id])) answers[q.id] = []
+    const arr = answers[q.id]
+    const pos = arr.indexOf(idx)
+    if (pos > -1) arr.splice(pos, 1); else arr.push(idx)
+    rdQ()
+  } else {
+    answers[q.id] = idx
+    rdQ()
+    setTimeout(nextQ, 300)
+  }
+}
+
+function nextQ() { const q = QS[curQ], v = answers[q.id]; if (v === null || (Array.isArray(v) && !v.length)) return; curQ++; rdQ() }
+function prevQ() { if (curQ > 0) { curQ--; rdQ() } }
+
+// ── SCORE CALCULATION ───────────────────────────────────
+function showProc() {
+  document.getElementById('proc-ov').classList.add('show')
+  let i = 0
+  const iv = setInterval(() => {
+    const b = document.getElementById('pbar'), l = document.getElementById('plbl')
+    if (!b) { clearInterval(iv); return }
+    b.style.width = Math.round((i+1) / STEPS.length * 100) + '%'
+    l.textContent = STEPS[i] || ''
+    i++
+    if (i >= STEPS.length) { clearInterval(iv); setTimeout(calc, 600) }
+  }, 420)
+}
+
+function calc() {
+  const a = answers
+  const exp = [85,70,50,25,10], sav = [10,25,45,65,90], dbt = [90,65,45,25,10]
+  const inv = [10,30,55,75,95], kno = [10,30,55,75,95], inc = [15,30,55,70,90]
+  S.sub = {
+    savings:     Math.round((sav[a.savings||0] + exp[a.expenses||0]) / 2),
+    spending:    exp[a.expenses||0],
+    investment:  inv[a.investing||0],
+    incomeGrowth:Math.round((inc[a.income||0] + 50) / 2),
+    knowledge:   kno[a.knowledge||0]
+  }
+  S.score = Math.max(5, Math.min(99, Math.round(
+    S.sub.savings * .25 + S.sub.spending * .2 + S.sub.investment * .2 +
+    S.sub.incomeGrowth * .15 + S.sub.knowledge * .1 + dbt[a.debt||0] * .1
+  )))
+  S.level = LVL.find(l => S.score >= l.min && S.score <= l.max)
+  S.profile = a
+  genPlan(); genInsight()
+  document.getElementById('proc-ov').classList.remove('show')
+  showReveal()
+}
+
+function showReveal() {
+  document.getElementById('rev-ov').classList.add('show')
+  setTimeout(() => {
+    const r = document.getElementById('rev-ring')
+    r.style.strokeDashoffset = 503 - (503 * S.score / 100)
+    r.style.stroke = S.level?.color || 'var(--gold2)'
+    cnt('rev-num', 0, S.score, 1500)
+  }, 200)
+  const b = document.getElementById('rev-badge')
+  b.textContent = S.level?.label
+  b.style.background = S.level?.bg
+  b.style.color = S.level?.color
+  document.getElementById('rev-interp').textContent = interp(S.score, S.sub)
+  const SN = {savings:'💰 Savings',spending:'💳 Spending',investment:'📈 Investment',incomeGrowth:'📊 Income',knowledge:'📚 Knowledge'}
+  document.getElementById('rev-sub').innerHTML = Object.entries(S.sub).map(([k,v]) =>
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">' +
+    '<div style="font-size:12px;color:var(--gray1);width:110px;flex-shrink:0">' + SN[k] + '</div>' +
+    '<div class="pt" style="flex:1"><div class="pf" style="width:' + v + '%;background:' + (v>=70?'var(--green)':v>=50?'var(--gold)':'var(--red)') + '"></div></div>' +
+    '<div style="font-size:12px;font-weight:500;color:var(--gold);width:24px;text-align:right">' + v + '</div></div>'
+  ).join('')
+  if (S.plan) {
+    const m = S.plan[0]
+    document.getElementById('rev-plan').innerHTML =
+      '<div style="font-size:9px;font-weight:600;letter-spacing:1.5px;color:var(--gold);margin-bottom:10px;text-transform:uppercase">' + m.theme + '</div>' +
+      m.tasks.slice(0,3).map(t => '<div style="font-size:13px;color:var(--gray1);padding:8px 0;border-bottom:1px solid var(--border);font-weight:300">✅ ' + t.text + '</div>').join('') +
+      '<div style="font-size:11px;color:var(--gray2);margin-top:8px;font-weight:300">+' + (m.tasks.length - 3) + ' more tasks in your dashboard</div>'
+  }
+}
+
+function enterDash() {
+  document.getElementById('rev-ov').classList.remove('show')
+  const pt = {}
+  if (S.plan) S.plan.forEach((m, mi) => m.tasks.forEach((_, ti) => { pt[mi+'-'+ti] = false }))
+  S.tasks = pt
+  showMobTabs()
+  updateSB()
+  navGo('dashboard')
+}
+
+function showMobTabs() {
+  document.getElementById('mob-tabs').style.display = 'block'
+  document.querySelector('.main').style.paddingBottom = '80px'
+}
+
+// ── PLAN GENERATION ─────────────────────────────────────
+function genPlan() {
+  S.plan = [
+    {theme:'BUILD YOUR FOUNDATION', tasks:[
+      {text:'Track every expense for 30 days', pts:5},
+      {text:'Set up savings account — target KES 5,000 emergency fund', pts:8},
+      {text:'Complete Personal Finance Basics course on NovaPesa', pts:6},
+      {text:'Write down income and all monthly expenses', pts:3},
+      {text:'Cancel 1 unnecessary subscription this month', pts:4}
+    ]},
+    {theme:'START GROWING', tasks:[
+      {text:'Open a money market fund — invest KES 1,000–2,000/month', pts:10},
+      {text:'Complete Investing 101 course to boost Investment Score', pts:8},
+      {text:'Increase savings by 5% of income this month', pts:7},
+      {text:'Learn about one new investment vehicle', pts:5},
+      {text:'Negotiate one bill or find a cheaper alternative', pts:4}
+    ]},
+    {theme:'BUILD MOMENTUM', tasks:[
+      {text:'Increase investment amount by KES 500–1,000', pts:10},
+      {text:'Complete forex or crypto basics course', pts:8},
+      {text:'Set a 6-month savings goal with specific KES target', pts:6},
+      {text:'Refer one friend to NovaPesa', pts:3},
+      {text:'Review NovaScore — target 10+ point improvement', pts:5}
+    ]}
+  ]
+}
+
+function genInsight() {
+  const w = Object.entries(S.sub).sort((a,b) => a[1]-b[1])[0]
+  const m = {
+    savings:    'Your Savings Score is your biggest opportunity. Even KES 500/week builds KES 26,000 in a year. Start a separate M-Pesa savings wallet today. 💰',
+    spending:   'Controlling spending is where most wealth is quietly built. Try 50/30/20: needs, wants, savings. 💳',
+    investment: 'Even KES 1,000/month in a money market fund beats idle money. Start today. 📈',
+    incomeGrowth:'A side income of KES 5,000/month changes your financial picture dramatically over 12 months. 📊',
+    knowledge:  'Financial knowledge is the highest-return investment. Complete one course this week. 📚'
+  }
+  S.insight = m[w[0]]
+}
+
+// ── SCREEN RENDERERS ────────────────────────────────────
+function rdDash() {
+  const h = new Date().getHours()
+  document.getElementById('dash-gr').textContent = h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening'
+  document.getElementById('dash-nm').textContent = S.name
+  document.getElementById('dash-sc').textContent = S.score || '—'
+  document.getElementById('dash-lv').textContent = S.level?.label || 'Complete your checkup'
+  document.getElementById('dash-sb').style.width = (S.score || 0) + '%'
+  document.getElementById('dash-nx').textContent = S.score ? (100 - S.score) + ' pts to Elite Investor' : ''
+  document.getElementById('dash-ins').textContent = S.insight || 'Complete your financial checkup to unlock personalized AI insights.'
+  document.getElementById('dash-co').innerHTML = S.courses.length + '<span style="font-size:18px;color:var(--gray2)"> / 10</span>'
+  const nw = (S.assets||[]).reduce((a,x)=>a+x.a,0) - (S.liab||[]).reduce((a,x)=>a+x.a,0)
+  document.getElementById('dash-nw').textContent = 'KES ' + nw.toLocaleString()
+  if (S.plan) {
+    const done = S.plan[0].tasks.filter((_,ti) => S.tasks['0-'+ti]).length
+    document.getElementById('dash-plan').textContent = 'Month 1: ' + done + '/' + S.plan[0].tasks.length + ' tasks done. Keep going!'
+  }
+}
+
+function rdScore() {
+  const s = S.score, sub = S.sub
+  const el = document.getElementById('sc-ring')
+  if (el) { el.style.strokeDashoffset = s ? 440-(440*s/100) : 440; el.style.stroke = S.level?.color || 'var(--gold)' }
+  document.getElementById('sc-big').textContent = s || '—'
+  const badge = document.getElementById('sc-badge')
+  badge.textContent = S.level?.label || '—'
+  if (S.level) { badge.style.background = S.level.bg; badge.style.color = S.level.color }
+  document.getElementById('sc-interp').textContent = interp(s, sub)
+  const SN = {savings:'💰 Savings',spending:'💳 Spending',investment:'📈 Investment',incomeGrowth:'📊 Income Growth',knowledge:'📚 Knowledge'}
+  document.getElementById('sc-subs').innerHTML = (!sub||!Object.keys(sub).length)
+    ? '<div style="font-size:13px;color:var(--gray2);padding:12px 0;font-weight:300">Complete your checkup to see your score breakdown.</div>'
+    : Object.entries(sub).map(([k,v]) =>
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">' +
+        '<div style="font-size:12px;color:var(--gray1);width:130px;flex-shrink:0">' + SN[k] + '</div>' +
+        '<div class="pt" style="flex:1"><div class="pf" style="width:' + v + '%;background:' + (v>=70?'var(--green)':v>=50?'var(--gold)':'var(--red)') + '"></div></div>' +
+        '<div style="font-size:12px;font-weight:500;color:var(--gold);width:24px;text-align:right">' + v + '</div></div>'
+      ).join('')
+  const imps = [
+    {pts:'+8', t:'Complete a course',         d:'Boosts Knowledge and Spending scores directly.',     act:"navGo('learning')"},
+    {pts:'+5', t:'Add to savings this week',  d:'Any amount improves your Savings Score immediately.', act:"navGo('networth')"},
+    {pts:'+10',t:'Start investing this month',d:'Open a money market account or try demo trading.',    act:"navGo('chat')"},
+    {pts:'+3', t:'Refer a friend',            d:'They join, you earn +3 points automatically.',        act:"navGo('referral')"},
+    {pts:'+15',t:'Complete your 90-Day Plan', d:'Tick every Month 1 task for maximum bonus points.',   act:"navGo('plan')"}
+  ]
+  const noSub = !sub || !Object.keys(sub).length
+  document.getElementById('sc-impr').innerHTML = noSub
+    ? '<div style="text-align:center;padding:20px"><div style="font-size:13px;color:var(--gray2);font-weight:300;margin-bottom:12px">Complete your checkup first to unlock improvement tips.</div><button class="btn btn-gold" onclick="startCheckup()">Take Free Checkup</button></div>'
+    : imps.map(imp =>
+        '<div onclick="' + imp.act + '" style="display:flex;gap:12px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;cursor:pointer">' +
+        '<div style="background:rgba(46,204,138,.1);border:1px solid rgba(46,204,138,.2);border-radius:10px;padding:8px 10px;text-align:center;flex-shrink:0;min-width:44px">' +
+        '<div style="font-family:Cormorant Garamond,serif;font-size:17px;font-weight:700;color:var(--green)">' + imp.pts + '</div>' +
+        '<div style="font-size:8px;color:var(--green)">PTS</div></div>' +
+        '<div style="flex:1"><div style="font-size:13px;font-weight:500;margin-bottom:3px;color:var(--white)">' + imp.t + '</div>' +
+        '<div style="font-size:12px;color:var(--gray2);font-weight:300;line-height:1.4">' + imp.d + '</div></div>' +
+        '<div style="font-size:20px;color:var(--gold);align-self:center">›</div></div>'
+      ).join('')
+}
+
+function rdPlan() {
+  if (!S.plan) {
+    document.getElementById('plan-body').innerHTML = '<div class="card" style="text-align:center;padding:40px"><div style="font-size:40px;margin-bottom:12px">📅</div><p style="color:var(--gray1);margin-bottom:16px;font-weight:300">Complete your checkup to generate your AI-powered 90-day plan.</p><button class="btn btn-gold" onclick="startCheckup()">Take Checkup</button></div>'
+    return
+  }
+  document.getElementById('plan-sub').textContent = 'AI-generated for ' + S.name + ' based on NovaScore ' + S.score + '.'
+  const cols = ['var(--gold)','var(--green)','var(--purple)']
+  document.getElementById('plan-body').innerHTML = S.plan.map((m, mi) => {
+    const d = m.tasks.filter((_,ti) => S.tasks[mi+'-'+ti]).length
+    const lk = mi === 2 && S.plan[1].tasks.filter((_,ti) => S.tasks['1-'+ti]).length < 3
+    return '<div class="mc">' +
+      '<div class="mh">' +
+      '<div><div style="font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;color:' + cols[mi] + '">MONTH ' + (mi+1) + '</div>' +
+      '<div style="font-size:14px;font-weight:500">' + m.theme + '</div></div>' +
+      '<div style="text-align:right"><div style="font-family:Cormorant Garamond,serif;font-size:20px;font-weight:700;color:' + cols[mi] + '">' + d + '/' + m.tasks.length + '</div>' +
+      '<div style="font-size:10px;color:var(--gray2);font-weight:300">tasks done</div></div></div>' +
+      '<div ' + (lk ? 'style="opacity:.35;pointer-events:none;filter:blur(2px)"' : '') + '>' +
+      m.tasks.map((t, ti) =>
+        '<div class="tr-row">' +
+        '<div class="tcb ' + (S.tasks[mi+'-'+ti] ? 'done' : '') + '" onclick="toggleT(' + mi + ',' + ti + ')">' + (S.tasks[mi+'-'+ti] ? '✓' : '') + '</div>' +
+        '<div style="font-size:13px;' + (S.tasks[mi+'-'+ti] ? 'text-decoration:line-through;color:var(--gray2)' : 'color:var(--gray1)') + ';flex:1;line-height:1.55;font-weight:300">' + t.text + '</div>' +
+        '<div style="font-size:10px;color:var(--gold);font-weight:500;white-space:nowrap">+' + t.pts + 'pts</div></div>'
+      ).join('') +
+      '</div>' + (lk ? '<div style="padding:12px 20px;text-align:center;font-size:12px;color:var(--gray2);font-weight:300">Complete Month 2 to unlock</div>' : '') + '</div>'
+  }).join('')
+}
+
+function toggleT(mi, ti) {
+  S.tasks[mi+'-'+ti] = !S.tasks[mi+'-'+ti]
+  if (S.tasks[mi+'-'+ti]) { const pts = S.plan[mi].tasks[ti].pts; S.score = Math.min(99, S.score + Math.round(pts*.3)); fp('+' + Math.round(pts*.3) + ' pts'); updateSB() }
+  rdPlan()
+}
+
+function rdCoach() {
+  if (!S.score) {
+    document.getElementById('spend-cats').innerHTML = '<div style="text-align:center;padding:40px 20px"><div style="font-size:40px;margin-bottom:14px">📊</div><div style="font-family:Cormorant Garamond,serif;font-size:20px;font-weight:600;margin-bottom:8px">Complete Your Checkup First</div><div style="font-size:13px;color:var(--gray2);margin-bottom:20px;font-weight:300">Your spending analysis will appear here after you complete your financial checkup.</div><button class="btn btn-gold" onclick="startCheckup()">Take Free Checkup →</button></div>'
+    return
+  }
+  document.getElementById('spend-cats').innerHTML = SPEND.map(c =>
+    '<div class="sc-row"><div style="font-size:20px;width:32px;text-align:center">' + c.e + '</div>' +
+    '<div style="flex:1"><div style="font-size:13px;font-weight:400;margin-bottom:4px">' + c.n + '</div>' +
+    '<div class="pt"><div class="pf" style="width:' + c.p + '%;background:' + c.c + '"></div></div></div>' +
+    '<div style="text-align:right"><div style="font-size:13px;font-weight:500">KES ' + c.a.toLocaleString() + '</div>' +
+    '<div style="font-size:10px;color:var(--gray2);font-weight:300">' + c.p + '%</div></div></div>'
+  ).join('')
+}
+
+function rdNW() {
+  const t = (S.assets||[]).reduce((a,x)=>a+x.a,0) - (S.liab||[]).reduce((a,x)=>a+x.a,0)
+  document.getElementById('nw-total').textContent = 'KES ' + t.toLocaleString()
+  const icons = {cash:'💵',savings:'🏦',investment:'📈',property:'🏠',vehicle:'🚗',other:'💼'}
+  document.getElementById('assets-list').innerHTML = (S.assets||[]).length
+    ? S.assets.map(a => '<div class="ar"><div class="ai-icon" style="background:rgba(46,204,138,.1)">' + (icons[a.type]||'💰') + '</div><div style="flex:1;font-size:13px">' + a.n + '</div><div style="text-align:right"><div style="font-family:Cormorant Garamond,serif;font-size:15px;font-weight:700;color:var(--gold)">KES ' + a.a.toLocaleString() + '</div><div style="font-size:11px;color:var(--green);font-weight:300">Asset</div></div></div>').join('')
+    : '<div style="font-size:13px;color:var(--gray2);padding:12px 0;font-weight:300">No assets yet. Add your first below.</div>'
+  document.getElementById('liab-list').innerHTML = (S.liab||[]).length
+    ? S.liab.map(l => '<div class="ar"><div class="ai-icon" style="background:rgba(224,85,85,.1)">💳</div><div style="flex:1;font-size:13px">' + l.n + '</div><div style="text-align:right"><div style="font-family:Cormorant Garamond,serif;font-size:15px;font-weight:700;color:var(--red)">KES ' + l.a.toLocaleString() + '</div><div style="font-size:11px;color:var(--red);font-weight:300">Liability</div></div></div>').join('')
+    : '<div style="font-size:13px;color:var(--gray2);padding:12px 0;font-weight:300">No liabilities. Great start!</div>'
+}
+
+function addItem(type) {
+  const n = prompt(type==='asset' ? 'Asset name (e.g. Savings Account, Shares, Car):' : 'Liability name (e.g. KCB Loan, HELB, Credit Card):')
+  if (!n) return
+  const a = parseInt(prompt('Amount in KES:'))
+  if (!a || isNaN(a)) return
+  if (type === 'asset') { const t = prompt('Type: cash / savings / investment / property / vehicle / other') || 'other'; S.assets.push({n,a,type:t}) }
+  else S.liab.push({n,a})
+  S.score = Math.min(99, S.score+1); fp('+1 pt'); updateSB(); rdNW()
+}
+
+function rdReport() {
+  document.getElementById('rep-sc').textContent = S.score || '—'
+  const SN = {savings:'Savings',spending:'Spending',investment:'Investment',incomeGrowth:'Income',knowledge:'Knowledge'}
+  if (!S.sub || !Object.keys(S.sub).length) {
+    document.getElementById('rep-subs').innerHTML = '<div style="text-align:center;padding:30px 20px"><div style="font-size:36px;margin-bottom:12px">📋</div><div style="font-family:Cormorant Garamond,serif;font-size:18px;font-weight:600;margin-bottom:8px">No Report Yet</div><div style="font-size:13px;color:var(--gray2);margin-bottom:18px;font-weight:300">Complete your financial checkup to generate your first weekly report.</div><button class="btn btn-gold" onclick="startCheckup()">Take Free Checkup →</button></div>'
+    document.getElementById('rep-lvl').innerHTML = ''
+    return
+  }
+  document.getElementById('rep-subs').innerHTML = Object.entries(S.sub).map(([k,v]) =>
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="font-size:11px;color:var(--gray1);width:100px;flex-shrink:0">' + SN[k] + '</div>' +
+    '<div class="pt" style="flex:1"><div class="pf" style="width:' + v + '%;background:' + (v>=70?'var(--green)':v>=50?'var(--gold)':'var(--red)') + '"></div></div>' +
+    '<div style="font-size:11px;font-weight:500;color:var(--gold);width:24px;text-align:right">' + v + '</div></div>'
+  ).join('')
+  const pts = S.level ? S.level.max - S.score : 0
+  document.getElementById('rep-lvl').innerHTML = '<div style="text-align:center;padding:16px"><div style="font-family:Cormorant Garamond,serif;font-size:26px;font-weight:700;color:var(--gold);margin-bottom:4px">' + (S.level?.label||'—') + '</div><div style="font-size:12px;color:var(--gray2);margin-bottom:12px;font-weight:300">' + pts + ' pts to next level</div><div class="pt"><div class="pf" style="width:' + S.score + '%"></div></div><div style="font-size:10px;color:var(--gray2);margin-top:6px">' + S.score + '/100</div></div>'
+}
+
+function rdLearn() {
+  let style = document.getElementById('fp-css')
+  if (!style) { style = document.createElement('style'); style.id = 'fp-css'; style.textContent = '.cg-fp{padding:6px 16px;border-radius:100px;font-size:12px;cursor:pointer;border:1px solid var(--border);color:var(--gray1);transition:all .2s;font-weight:400}.cg-fp.active{background:var(--green);color:var(--ink);border-color:var(--green);font-weight:600}'; document.head.appendChild(style) }
+  document.getElementById('cat-pills').innerHTML = CATS.map(c => '<div class="cg-fp ' + (c===activeCat?'active':'') + '" onclick="setCat(\'' + c + '\')">' + c + '</div>').join('')
+  const fl = activeCat === 'All' ? COURSES : COURSES.filter(x => x.cat === activeCat)
+  document.getElementById('course-grid').innerHTML = fl.map(course => {
+    const started = S.courses.includes(course.id)
+    return '<div class="cc" onclick="startC(' + course.id + ')">' +
+      '<div class="ct" style="background:' + course.bg + '">' + course.e + '</div>' +
+      '<div class="cb">' +
+      '<div style="font-size:14px;font-weight:500;margin-bottom:6px;line-height:1.4;color:var(--white)">' + course.t + '</div>' +
+      '<div style="font-size:11px;color:var(--gray2);margin-bottom:8px;font-weight:300">' + course.l + ' lessons &nbsp;·&nbsp; ' + course.lv + '</div>' +
+      '<div style="font-size:13px;color:var(--gold);font-weight:600;margin-bottom:10px">+' + course.pts + ' NovaScore pts</div>' +
+      (started ? '<div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:8px"><div style="height:100%;width:35%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:2px"></div></div>' : '') +
+      '<div style="margin-top:10px"><span class="tag ' + (started?'tgr':'tg') + '">' + (started?'In Progress':'Start Course') + '</span></div>' +
+      '</div></div>'
+  }).join('')
+}
+
+function setCat(c) { activeCat = c; rdLearn() }
+
+function startC(id) {
+  const course = COURSES.find(c => c.id === id)
+  if (!course) return
+  if (!S.courses.includes(id)) {
+    const pts = Math.round(course.pts * 0.3)
+    S.courses.push(id); S.score = Math.min(99, S.score + pts)
+    fp('+' + pts + ' pts'); updateSB(); rdLearn()
+  }
+  showCourseDetail(course)
+}
+
+function showCourseDetail(course) {
+  let modal = document.getElementById('course-modal')
+  if (!modal) { modal = document.createElement('div'); modal.id = 'course-modal'; modal.style.cssText = 'position:fixed;inset:0;z-index:600;background:rgba(5,5,10,.9);display:flex;align-items:flex-end;justify-content:center'; document.body.appendChild(modal) }
+  const started = S.courses.includes(course.id)
+  const lessons = ['Introduction to ' + course.t,'Core Concepts & Fundamentals','Practical Application','Real-World Examples','Common Mistakes to Avoid','Advanced Strategies','Building Your Action Plan','Assessment & Next Steps']
+  modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:24px 24px 0 0;width:100%;max-width:600px;max-height:85vh;overflow-y:auto">' +
+    '<div style="background:' + course.bg + ';padding:28px 24px 20px;border-radius:24px 24px 0 0;text-align:center">' +
+    '<div style="font-size:48px;margin-bottom:8px">' + course.e + '</div>' +
+    '<div style="font-family:Cormorant Garamond,serif;font-size:22px;font-weight:700;color:var(--white);margin-bottom:4px">' + course.t + '</div>' +
+    '<div style="font-size:12px;color:rgba(255,255,255,.6)">' + course.l + ' lessons &nbsp;·&nbsp; ' + course.lv + '</div></div>' +
+    '<div style="padding:20px 24px">' +
+    '<div style="display:flex;gap:12px;margin-bottom:20px">' +
+    '<div style="flex:1;background:var(--surface);border-radius:12px;padding:14px;text-align:center"><div style="font-family:Cormorant Garamond,serif;font-size:24px;font-weight:700;color:var(--gold)">+' + course.pts + '</div><div style="font-size:10px;color:var(--gray2);margin-top:2px;font-weight:300">NovaScore pts</div></div>' +
+    '<div style="flex:1;background:var(--surface);border-radius:12px;padding:14px;text-align:center"><div style="font-family:Cormorant Garamond,serif;font-size:24px;font-weight:700;color:var(--green)">' + course.l + '</div><div style="font-size:10px;color:var(--gray2);margin-top:2px;font-weight:300">Lessons</div></div>' +
+    '<div style="flex:1;background:var(--surface);border-radius:12px;padding:14px;text-align:center"><div style="font-family:Cormorant Garamond,serif;font-size:24px;font-weight:700;color:var(--purple)">' + (course.l*12) + 'm</div><div style="font-size:10px;color:var(--gray2);margin-top:2px;font-weight:300">Duration</div></div></div>' +
+    '<div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--gray2);text-transform:uppercase;margin-bottom:12px">Course Lessons</div>' +
+    lessons.slice(0, course.l).map((l,i) =>
+      '<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">' +
+      '<div style="width:28px;height:28px;border-radius:50%;background:' + (i===0&&started?'var(--green)':'var(--raised)') + ';display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;color:var(--white)">' + (i===0&&started?'✓':(i+1)) + '</div>' +
+      '<div style="flex:1;font-size:13px;color:var(--gray1);font-weight:300">' + l + '</div>' +
+      '<div style="font-size:11px;color:var(--gray2)">' + (8+i*2) + ' min</div></div>'
+    ).join('') +
+    '<div style="margin-top:20px;display:flex;gap:10px">' +
+    '<button onclick="closeCourseModal()" style="flex:1;padding:13px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--gray1);font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer">Close</button>' +
+    '<button onclick="enrollCourse(' + course.id + ')" style="flex:2;padding:13px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold2),var(--gold));color:var(--ink);font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer">' + (started?'Continue Course →':'Start Free Course →') + '</button>' +
+    '</div></div></div>'
+  modal.style.display = 'flex'
+}
+
+function closeCourseModal() { const m = document.getElementById('course-modal'); if (m) m.style.display = 'none' }
+
+function enrollCourse(id) {
+  const course = COURSES.find(c => c.id === id)
+  if (!course) return
+  if (!S.courses.includes(id)) { S.courses.push(id); const pts = Math.round(course.pts*.3); S.score = Math.min(99,S.score+pts); fp('+'+pts+' pts'); updateSB() }
+  closeCourseModal(); rdLearn()
+  alert('You are enrolled in "' + course.t + '"!\nComplete all ' + course.l + ' lessons to earn the full +' + course.pts + ' NovaScore points.')
+}
+
+function rdRef() {
+  const u = S.name.toLowerCase().replace(/\s/g,'')
+  document.getElementById('ref-lnk').textContent = 'novapesa.com/ref/' + u + '2026'
+  document.getElementById('ref-ct').textContent = S.refs
+  document.getElementById('ref-pt').textContent = S.refs * 3
+}
+
+// ── AI CHAT (Claude API) ─────────────────────────────────
+function initChat() {
+  const greeting = S.score
+    ? 'Hello ' + S.name + '! I am **Nova**, your personal AI financial advisor. Your NovaScore is **' + S.score + '/100** — you are a **' + (S.level?S.level.label:'NovaPesa member') + '**! I have reviewed your complete financial profile. What would you like help with today?'
+    : 'Hello! I am **Nova**, your AI financial advisor. I am powered by Claude AI and ready to help you with all things personal finance — budgeting, investing, saving, and growing your wealth in Kenya. What questions do you have?'
+  S.chat = [{role:'ai', content:greeting}]
+}
+
+function rdChat() {
+  const sq = ['How can I improve my NovaScore?','How should I invest KES 10,000?','Should I trade forex?','How do I save faster?','What is a money market fund?','How do I clear my debt?']
+  document.getElementById('csugg').innerHTML = sq.map(q => '<button class="sqb" onclick="askSQ(\'' + q.replace(/'/g,"\\'") + '\')">' + q + '</button>').join('')
+  rdCMsgs()
+}
+
+function rdCMsgs() {
+  const c = document.getElementById('cmsgs')
+  if (!c) return
+  c.innerHTML = S.chat.map(m =>
+    '<div class="msg ' + m.role + '">' +
+    '<div class="mav ' + (m.role==='ai'?'av-ai':'av-u') + '">' + (m.role==='ai'?'🤖':S.name.charAt(0)) + '</div>' +
+    '<div class="mbub">' + m.content.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>') + '</div>' +
+    '</div>'
+  ).join('')
+  c.scrollTop = c.scrollHeight
+}
+
+function askSQ(q) { document.getElementById('cinp').value = q; sendMsg() }
+function ck(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg() } }
+
+async function sendMsg() {
+  const inp = document.getElementById('cinp'), msg = inp.value.trim()
+  if (!msg) return
+  inp.value = ''
+  document.getElementById('sbtn').disabled = true
+  S.chat.push({role:'user', content:msg}); rdCMsgs(); showTyping()
+  const r = await getReply(msg)
+  hideTyping(); S.chat.push({role:'ai', content:r}); rdCMsgs()
+  document.getElementById('sbtn').disabled = false
+}
+
+function showTyping() {
+  const c = document.getElementById('cmsgs'), d = document.createElement('div')
+  d.className = 'msg ai'; d.id = 'typing'
+  d.innerHTML = '<div class="mav av-ai">🤖</div><div class="mbub"><span class="tdot"></span><span class="tdot" style="animation-delay:.2s"></span><span class="tdot" style="animation-delay:.4s"></span></div>'
+  c.appendChild(d); c.scrollTop = c.scrollHeight
+}
+function hideTyping() { document.getElementById('typing')?.remove() }
+
+async function getReply(msg) {
+  // Build user context string for the AI
+  const ctx = S.score
+    ? `User profile: Name=${S.name}, NovaScore=${S.score}/100, Level=${S.level?.label}, SubScores=${JSON.stringify(S.sub)}, Goals=${JSON.stringify(S.profile?.goals)}, Challenge=${S.profile?.challenge !== undefined ? ['Spend more than I earn','Cannot save consistently','Do not know how to invest','Have too much debt','Want to grow my income','Lack financial knowledge'][S.profile.challenge] : 'unknown'}`
+    : `User: ${S.name} (no checkup completed yet)`
+
+  // Format chat history for the API
+  const history = S.chat.slice(-8).map(m => ({
+    role: m.role === 'ai' ? 'assistant' : 'user',
+    content: m.content
+  }))
+  // Remove the last message (current user message, already in S.chat)
+  if (history.length && history[history.length-1].role === 'user') history.pop()
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `You are Nova, an expert AI financial advisor for NovaPesa — a Kenyan personal finance app. You help users improve their financial health with practical, actionable advice tailored to Kenya (KES currency, M-Pesa, NSE, Kenyan banks, money market funds like CIC, Sanlam, etc.).
+
+${ctx}
+
+Rules:
+- Be warm, encouraging and practical
+- Keep responses concise (2-4 short paragraphs max)
+- Always give specific, actionable steps
+- Reference KES amounts relevant to the user's income level
+- Use **bold** for key points
+- When relevant, mention NovaPesa features (NovaScore, courses, plan, net worth tracker)
+- Never give advice outside personal finance`,
+        messages: [...history, {role:'user', content:msg}]
+      })
+    })
+    const data = await res.json()
+    if (data.content?.[0]?.text) return data.content[0].text
+  } catch (e) { console.log('API error:', e) }
+
+  // Fallback responses if API fails
+  return mockReply(msg.toLowerCase())
+}
+
+function mockReply(msg) {
+  if (msg.includes('novascor') || msg.includes('score')) return 'Your **NovaScore** reflects 5 key areas: Savings (25%), Spending (20%), Investment (20%), Income Growth (15%), and Knowledge (10%). The fastest way to improve is to **complete a course** (+8pts), **start investing** (+10pts), or **complete your 90-Day Plan tasks** (+15pts). Which would you like to focus on first?'
+  if (msg.includes('invest') || msg.includes('money market')) return '**Money Market Funds** are the safest starting point for Kenyan investors. Top options include CIC Money Market Fund, Sanlam, and Britam — all accessible with as little as **KES 1,000**. They currently offer 10–14% returns annually, far better than a bank savings account. Open one via their mobile apps this week!'
+  if (msg.includes('forex') || msg.includes('trading')) return 'Forex trading can be profitable but **carries significant risk**. Before trading real money: 1) Learn the basics (our Forex course covers this), 2) Practice on a demo account for 3 months, 3) Never risk more than 1-2% of capital per trade. XAU/USD and EUR/USD are good starting pairs. What is your current experience level?'
+  if (msg.includes('sav')) return 'The **50/30/20 rule** works well in Kenya: 50% needs (rent, food, transport), 30% wants, 20% savings & investing. For M-Pesa users, set up a **Lock Savings** or use the Mali savings feature — automatic savings removes the temptation to spend. Even KES 500/week = KES 26,000 in a year!'
+  if (msg.includes('debt') || msg.includes('loan')) return 'To clear debt fast, use the **Avalanche Method**: list all debts by interest rate, pay minimums on all, then throw every extra shilling at the highest-interest debt first. Mobile loans (Fuliza, KCB M-Pesa) typically charge 7–9% monthly — pay those off first! Would you like help creating a debt payoff timeline?'
+  if (msg.includes('budget')) return 'Start with a **zero-based budget**: give every KES a job before the month begins. Track spending with M-Pesa statements — download 3 months and categorize. Most people discover they are spending **20-30% more than they thought** on food and entertainment. Want me to help you set up a simple budget?'
+  return 'Great question! As your AI financial advisor, I am here to help you **grow your wealth in Kenya**. I can help with budgeting, investing, forex, saving strategies, debt management, and understanding your NovaScore. What specific area would you like to improve first?'
+}
+
+// ── HELPERS ─────────────────────────────────────────────
+function interp(s, sub) {
+  if (!sub || !Object.keys(sub).length) return ''
+  const st = Object.entries(sub).sort((a,b) => b[1]-a[1])[0]
+  const w  = Object.entries(sub).sort((a,b) => a[1]-b[1])[0]
+  const nm = {savings:'savings',spending:'spending control',investment:'investments',incomeGrowth:'income growth',knowledge:'financial knowledge'}
+  if (s >= 71) return 'Excellent! Your ' + nm[st[0]] + ' is your greatest strength. Focus on ' + nm[w[0]] + ' to reach Elite Investor.'
+  if (s >= 51) return 'Good progress! Your ' + nm[st[0]] + ' shows real promise. Improving ' + nm[w[0]] + ' unlocks the next level.'
+  if (s >= 31) return 'Getting started! Your ' + nm[st[0]] + ' is your foundation. Prioritise ' + nm[w[0]] + ' for the biggest gains.'
+  return 'Every expert was once a beginner. Your ' + nm[st[0]] + ' is your starting point. Let us improve ' + nm[w[0]] + ' first.'
+}
+
+function cnt(id, from, to, dur) {
+  const el = document.getElementById(id); if (!el) return
+  const start = Date.now()
+  const tick = () => { const p = Math.min((Date.now()-start)/dur,1), e = 1-Math.pow(1-p,3); el.textContent = Math.round(from+(to-from)*e); if (p<1) requestAnimationFrame(tick) }
+  requestAnimationFrame(tick)
+}
+
+function fp(text) {
+  const el = document.createElement('div'); el.className = 'fp-el'; el.textContent = text
+  el.style.left = (window.innerWidth/2-40) + 'px'; el.style.top = (window.innerHeight/2-40) + 'px'
+  document.body.appendChild(el); setTimeout(() => el.remove(), 1300)
+}
+
+function updateSB() {
+  document.getElementById('sb-av').textContent = S.name.charAt(0).toUpperCase()
+  document.getElementById('sb-nm').textContent = S.name
+  document.getElementById('sb-sc').textContent = 'NovaScore: ' + (S.score || '—')
+}
+
+function shareWA() { window.open('https://wa.me/?text=' + encodeURIComponent('My NovaScore is ' + S.score + '/100! I am a ' + (S.level?.label||'NovaPesa member') + '. Check your financial health free: novapesa.com #NovaPesa #GrowBeyond'), '_blank') }
+function shareX()  { window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('NovaScore: ' + S.score + '/100 — ' + S.level?.label + ' Check yours free: novapesa.com #NovaPesa #GrowBeyond'), '_blank') }
+
+function fallbackCopy(txt) {
+  const el = document.createElement('textarea'); el.value = txt; el.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0'
+  document.body.appendChild(el); el.focus(); el.select(); el.setSelectionRange(0,99999)
+  try { document.execCommand('copy'); fp('Link copied!') } catch(e) { prompt('Copy this link:', txt) }
+  document.body.removeChild(el)
+}
+
+function copyL() {
+  const txt = 'https://novapesa.com'
+  navigator.clipboard && window.isSecureContext ? navigator.clipboard.writeText(txt).then(()=>fp('Link copied!')).catch(()=>fallbackCopy(txt)) : fallbackCopy(txt)
+}
+function copyRef() {
+  const txt = document.getElementById('ref-lnk').textContent
+  navigator.clipboard && window.isSecureContext ? navigator.clipboard.writeText(txt).then(()=>fp('Link copied!')).catch(()=>fallbackCopy(txt)) : fallbackCopy(txt)
+}
+
+// Init
+rdDash()
+</script>
+</body>
+</html>
